@@ -47,8 +47,7 @@ double computeAltitude(double x, double y)
  *************************************************************************/
 double computeGravity(double h)
 {
-   double base = (EARTH_RADIUS / (EARTH_RADIUS + h));
-   return GRAVITY * (base * base);
+   return GRAVITY * ((EARTH_RADIUS / (EARTH_RADIUS + h)) * (EARTH_RADIUS / (EARTH_RADIUS + h)));
 }
 
 /*************************************************************************
@@ -66,7 +65,7 @@ double computeGravity(double h)
 double computeGravityDirection(double xS, double yS)
 {
    // -  (-xS) direction is positive
-   return atan2(-xS, -yS);  /* -xS is same thing as 0.0 - xS */
+   return atan2(xS, yS);  /* -xS is same thing as 0.0 - xS */
 }
 
 /*******************************************************************
@@ -129,7 +128,7 @@ double calcVelocity(double velocityInit, double acceleration)
  * *******************************************************************/
 double calcDistance(double distanceInit, double velocity, double acceleration)
 {
-   return distanceInit + (velocity * TIME_PER_FRAME) + (0.5 * acceleration * (TIME_PER_FRAME *                                                                                   TIME_PER_FRAME));
+   return distanceInit + (velocity * TIME_PER_FRAME) + (0.5 * acceleration * (TIME_PER_FRAME * TIME_PER_FRAME));
 }
 
 /***********************************************************************
@@ -138,18 +137,15 @@ double calcDistance(double distanceInit, double velocity, double acceleration)
  ***********************************************************************/
 void Satellite::update()
 {
-   double altitude = computeAltitude(position.getMetersX(), position.getMetersY());
-   double gravity = computeGravity(altitude);
-   double angle = computeGravityDirection(position.getMetersX(), position.getMetersY());
-   double accelerationX = calcHorComp(gravity, angle);
-   double accelerationY = calcVertComp(gravity, angle);
-   double velocityX = calcVelocity(-2685.0 /* Cathetus */,  accelerationX);
-   double velocityY = calcVelocity(1550.0 /* Cathetus */,  accelerationY);
-   double newX = calcDistance(position.getMetersX(), velocityX, accelerationX);
-   double newY = calcDistance(position.getMetersY(), velocityY, accelerationX);
+   this->altitude = computeAltitude(position.getMetersX(), position.getMetersY());
+   this->gravity = computeGravity(altitude);
+   this->angle = computeGravityDirection(position.getMetersX(), position.getMetersY());
+   this->accelerationX = calcHorComp(gravity, angle);
+   this->accelerationY = calcVertComp(gravity, angle);
+   this->velocityX = calcVelocity(velocityX /* Cathetus */,  accelerationX);
+   this->velocityY = calcVelocity(velocityY /* Cathetus */,  accelerationY);
+   this->newX = calcDistance(position.getMetersX(), velocityX, accelerationX);
+   this->newY = calcDistance(position.getMetersY(), velocityY, accelerationY);
    position.setMeters(newX, newY);
-   this->angle = angle;
    std::cout << position << std::endl;
 }
-
-
