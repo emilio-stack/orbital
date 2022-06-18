@@ -8,6 +8,7 @@
  *    class is to get the orbit working in the simulator
  ************************************************************************/
 
+#include <cmath>
 #include "satellite.h"
 
 const double TIME_DILATION = 24.0 * 60.0; /* 24 hours in a day X 60 minutes in an hour */
@@ -65,8 +66,8 @@ double computeGravity(double h)
  *************************************************************************/
 double computeGravityDirection(double xS, double yS)
 {
-   // -  (-xS) direction is positive
-   return atan2(-xS, -yS);  /* -xS is same thing as 0.0 - xS */
+//   return atan2(-xS, -yS);  /* -xS is same thing as 0.0 - xS */
+   return atan2(xS, yS); // why does this work and not the line above
 }
 
 /*******************************************************************
@@ -138,18 +139,30 @@ double calcDistance(double distanceInit, double velocity, double acceleration)
  ***********************************************************************/
 void Satellite::update()
 {
+   // Calculations
    double altitude = computeAltitude(position.getMetersX(), position.getMetersY());
    double gravity = computeGravity(altitude);
    double angle = computeGravityDirection(position.getMetersX(), position.getMetersY());
    double accelerationX = calcHorComp(gravity, angle);
    double accelerationY = calcVertComp(gravity, angle);
-   double velocityX = calcVelocity(-2685.0 /* Cathetus */,  accelerationX);
-   double velocityY = calcVelocity(1550.0 /* Cathetus */,  accelerationY);
-   double newX = calcDistance(position.getMetersX(), velocityX, accelerationX);
-   double newY = calcDistance(position.getMetersY(), velocityY, accelerationX);
+   
+   double velocityX = calcVelocity(initVelocityX,  accelerationX);
+   double velocityY = calcVelocity(initVelocityY,  accelerationY);
+   
+   double additX = velocityX * sin(angle);
+   double additY = velocityY * cos(angle);
+   
+   double totalVelX = additX + velocityX;
+   double totalVelY = additY + velocityY;
+   
+   double newX = calcDistance(position.getMetersX(), totalVelX, accelerationX);
+   double newY = calcDistance(position.getMetersY(), totalVelY, accelerationY);
+   
+   // Update
    position.setMeters(newX, newY);
-   this->angle = angle;
-   std::cout << position << std::endl;
+   currentAngle = angle;
+   initVelocityX = velocityX;
+   initVelocityY = velocityY;
 }
 
 
