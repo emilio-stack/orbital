@@ -48,8 +48,7 @@ double computeAltitude(double x, double y)
  *************************************************************************/
 double computeGravity(double h)
 {
-   double base = (EARTH_RADIUS / (EARTH_RADIUS + h));
-   return GRAVITY * (base * base);
+   return GRAVITY * ((EARTH_RADIUS / (EARTH_RADIUS + h)) * (EARTH_RADIUS / (EARTH_RADIUS + h)));
 }
 
 /*************************************************************************
@@ -130,7 +129,7 @@ double calcVelocity(double velocityInit, double acceleration)
  * *******************************************************************/
 double calcDistance(double distanceInit, double velocity, double acceleration)
 {
-   return distanceInit + (velocity * TIME_PER_FRAME) + (0.5 * acceleration * (TIME_PER_FRAME *                                                                                   TIME_PER_FRAME));
+   return distanceInit + (velocity * TIME_PER_FRAME) + (0.5 * acceleration * (TIME_PER_FRAME * TIME_PER_FRAME));
 }
 
 /***********************************************************************
@@ -164,5 +163,3 @@ void Satellite::update()
    initVelocityX = velocityX;
    initVelocityY = velocityY;
 }
-
-
