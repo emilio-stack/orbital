@@ -15,4 +15,4 @@ class AngleStub: public Angle
 {
 public:
    AngleStub(){};
-}
+};

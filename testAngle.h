@@ -36,7 +36,8 @@ public:
       test_degreesFromRadian();
       test_radianFromDegrees();
       test_degreesFromXY();
-      test_normalize();
+      test_normalize_negative();
+      test_normalize_positive();
       test_addRadian_positive();
       test_addRadian_negative();
       test_addDegrees_positive();
@@ -59,7 +60,7 @@ private:
       
       // Verify
       assert(value == (M_PI / 2));
-      assert(value == 1.570796);
+      assert(angle.closeEnough(value, 1.570796));
    }  // Teardown
    
    // Test the get degrees method
@@ -117,9 +118,10 @@ private:
       value = angle.degreesFromRadian(0.785398);
       
       // Verify
-      assert(angle.angle == 0.0);   // this method should not affect state
-      assert(value == 45.0);        // this method should only calculate from radian
-                                    // given as an argument. Not from the state
+      assert(angle.angle == 0.0);               // this method should not affect state
+      assert(angle.closeEnough(value, 45.0));   // this method should only calculate
+                                                // from radian given as an argument.
+                                                // Not from the state.
       
    }  // Teardown
    
@@ -135,9 +137,9 @@ private:
       value = angle.radianFromDegrees(45.0);
       
       // Verify
-      assert(angle.angle == 0.0);   // this method should not affect state
-      assert(value == 0.785398);    // this method should only calculate from degrees
-                                    // given as an argument. Not from the state
+      assert(angle.angle == 0.0);                  // this method should not affect state
+      assert(angle.closeEnough(value, 0.785398));  // this method should only calculate from degrees
+                                                   // given as an argument. Not from the state
       
    }  // Teardown
    
@@ -155,14 +157,14 @@ private:
       value = angle.degreesFromXY(x, y);
       
       // Verify
-      assert(angle.angle == 0.0);   // this method should not affect state
-      assert(value == 30.0);        // this method should only calculate from degrees
-                                    // given as an argument. Not from the state
+      assert(angle.angle == 0.0);               // this method should not affect state
+      assert(angle.closeEnough(value, 30.0));   // this method should only calculate from degrees
+                                                // given as an argument. Not from the state
       
    }  // Teardown
    
-   // Test normalization of an invalid angle
-   void test_normalize()
+   // Test normalization of an invalid negative angle
+   void test_normalize_negative()
    {
       // Setup
       Angle angle;
@@ -170,11 +172,28 @@ private:
       double value = 0.0;
       
       // Exercise
-      value = angle.normalize(-5.49779);
+      value = angle.normalize(-315);
       
       // Verify
       assert(angle.angle == 0.0);   // this method should not affect state
-      assert(value == 0.785398);    // this method should only normailze the angle given
+      assert(value == 45.0);        // this method should only normailze the angle given
+                                    // as an argument. It should not write to state.
+   }  // Teardown
+   
+   // Test normalization of an invalid positive angle
+   void test_normalize_positive()
+   {
+      // Setup
+      Angle angle;
+      angle.angle = 0.0;
+      double value = 0.0;
+      
+      // Exercise
+      value = angle.normalize(405);
+      
+      // Verify
+      assert(angle.angle == 0.0);   // this method should not affect state
+      assert(value == 45.0);        // this method should only normailze the angle given
                                     // as an argument. It should not write to state.
    }  // Teardown
    
@@ -189,7 +208,7 @@ private:
       angle.addRadian(0.785398);
       
       // Verify
-      assert(angle.angle == 90.0);
+      assert(angle.closeEnough(angle.angle, 90.0));
    }  // Teardown...
    
    // Test add radian positive
@@ -203,7 +222,7 @@ private:
       angle.addRadian(-0.785398);
       
       // Verify
-      assert(angle.angle == 0.0);
+      assert(angle.closeEnough(angle.angle, 0.0));
    }  // Teardown...
    
    // Test add degrees positive

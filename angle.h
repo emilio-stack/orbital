@@ -8,6 +8,8 @@
  ************************************************************************/
 
 #pragma once
+#define _USE_MATH_DEFINES
+#include <cmath>
 
 class Angle
 {
@@ -15,26 +17,31 @@ public:
    // The test suite is a friend for private access
    friend class TestAngle;
    
-   // The default constructor
-   Angle(){};
+   // Constructors
+   Angle() : angle(0.0f) {};
+   Angle(double angle) { setDegrees(normalize(angle)); }
+   Angle(double x, double y) { angle =  degreesFromXY(x, y); }
    
    // Getters
-   double getRadian();
-   double getDegrees();
+   virtual double getRadian() const { return radianFromDegrees(angle); };
+   virtual double getDegrees() const { return angle; };
    
    // Setters
-   void setRadian(double amount);
-   void setDegrees(double amount);
-   void addRadian(double amount);
-   void addDegrees(double amount);
+   void setDegrees(double newAngleDegrees);
+   void setRadian(double newAngleRadians) { setDegrees((degreesFromRadian(newAngleRadians))); };
+   
+   // Updaters
+   void addDegrees(double amount) { setDegrees(normalize(angle + amount)); };
+   void addRadian(double amount) { addDegrees(degreesFromRadian(amount)); };
    
    
 private:
    double angle;  // The angle stored in degrees
    
    // converters
-   double degreesFromRadian(double radian);
-   double radianFromDegrees(double degrees);
-   double degreesFromXY(double x, double y);
+   double degreesFromRadian(double radian)  const { return radian * 180 / M_PI; };
+   double radianFromDegrees(double degrees) const { return degrees * M_PI / 180; };
+   double degreesFromXY(double x, double y) const { return degreesFromRadian(atan2(x, y)); }
    double normalize(double angle);
+   bool closeEnough(double computedValue, double hardcodeValue) const;
 };
