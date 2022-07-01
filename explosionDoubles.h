@@ -18,7 +18,11 @@
 class SputnikExplosionStub : public Explosion
 {
 public:
-   SputnikExplosionStub(){};
+   SputnikExplosionStub()
+   { 
+      setFragments(4.0);
+      setParts(0.0);
+   };
 };
 
 /***********************************************************************
@@ -28,7 +32,11 @@ public:
 class DragonExplosionStub : public Explosion
 {
 public:
-   DragonExplosionStub(){};
+   DragonExplosionStub()
+   {
+      setFragments(2.0);
+      setParts(3.0);
+   };
 };
 
 /***********************************************************************
@@ -38,7 +46,11 @@ public:
 class GPSExplosionStub : public Explosion
 {
 public:
-   GPSExplosionStub(){};
+   GPSExplosionStub()
+   {
+      setFragments(2.0);
+      setParts(3.0);
+   };
 };
 
 /***********************************************************************
@@ -48,7 +60,11 @@ public:
 class HubbleExplosionStub : public Explosion
 {
 public:
-   HubbleExplosionStub(){};
+   HubbleExplosionStub()
+   {
+      setFragments(0.0);
+      setParts(4.0);
+   };
 };
 
 /***********************************************************************
@@ -58,7 +74,11 @@ public:
 class ShipExplosionStub : public Explosion
 {
 public:
-   ShipExplosionStub(){};
+   ShipExplosionStub()
+   {
+      setFragments(4.0);
+      setParts(0.0);
+   };
 };
 
 /***********************************************************************
@@ -68,7 +88,11 @@ public:
 class AtomicExplosionStub : public Explosion
 {
 public:
-   AtomicExplosionStub(){};
+   AtomicExplosionStub()
+   {
+      setFragments(0.0);
+      setParts(0.0);
+   };
 };
 
 /***********************************************************************
@@ -78,7 +102,11 @@ public:
 class ProjectilleExplosionStub : public Explosion
 {
 public:
-   ProjectilleExplosionStub(){};
+   ProjectilleExplosionStub()
+   {
+      setFragments(0.0);
+      setParts(0.0);
+   };
 };
 
 /***********************************************************************
@@ -88,5 +116,9 @@ public:
 class StarlinkExplosionStub : public Explosion
 {
 public:
-   StarlinkExplosionStub(){};
+   StarlinkExplosionStub()
+   {
+      setFragments(2.0);
+      setParts(2.0);
+   };
 };

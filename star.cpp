@@ -76,6 +76,9 @@ Star :: Star(const Position& ptBoundary)
    position.setMetersX(random(-ptBoundary.getMetersX(), ptBoundary.getMetersX()));
    position.setMetersY(random(-ptBoundary.getMetersY(), ptBoundary.getMetersY()));
    
+   std::cout << "X: " << position.getPixelsX() << std::endl;
+   std::cout << "Y: " << position.getPixelsY() << std::endl;
+   
    
 //   position.setMeters(21082000.0, 36515095.0);
 //   position.setPixelsX(60);

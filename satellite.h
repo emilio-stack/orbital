@@ -11,6 +11,8 @@
 #pragma once
 
 #include "position.h"
+#include "velocity.h"
+#include "explosion.h"
 
 class Satellite
 {
@@ -20,27 +22,40 @@ public:
    friend class TestSatellite;
    
    // Constructor
-   Satellite(): position(0, 42164000) {}
+   Satellite(): position(0, 42164000), initVelocityX(-3100.0), initVelocityY(0.0) {}
    
    // Accessors
-   Position getPosition() const { return position; }
-   double getAngle() const { return currentAngle; }
-   
+   Position getPosition() const  { return position;      }
+   Angle getAngle() const        { return angle;         }
+   virtual bool checkExpired()   { return false;         }
+
    // Mutators
    void update();
+
+   Angle rotateRight() { angle.addRadian(0.1); return angle; };
+   Angle rotateLeft() { angle.addRadian(-0.1); return angle; };
+
+   // accelerate ship
+   void accelerate(bool canAccelerate);
    
-private:
+protected:
+   float expiresAfter;              // The expiration timer for the satellite
+   float age;                       // The age of the satellite
+
+public:
    Position position;               // The position of the satellite
-   double currentAngle;             // The angle in radians
-   double initVelocityX = -3100.0;  // The initial horizontal velocity
-   double initVelocityY = 0.0;      // The initial vertical velocity
+   Velocity velocity;               // The velocity of the satellite
+   Explosion explosions;
+   Angle angle;                     // The angle in radians
+   double initVelocityX;            // The initial horizontal velocity
+   double initVelocityY;            // The initial vertical velocity
 };
 
 // The fragment class
 class Fragment: public Satellite
 {
 public:
-   Fragment(){};
+   bool checkExpired() { return age >= expiresAfter ? 1 : 0; }
 };
 
 // The projectille class
@@ -48,6 +63,7 @@ class Projectille: public Satellite
 {
 public:
    Projectille(){};
+   bool checkExpired() { return age >= expiresAfter ? 1 : 0; }
 };
 
 // The sputnik class
@@ -82,7 +98,13 @@ public:
 class Ship: public Satellite
 {
 public:
-   Ship(){};
+   Ship()
+   {
+      position.setMetersX(0);
+      position.setMetersY(42164000.0);
+      velocity.setDX(-3100);
+      velocity.setDY(0);
+   };
 };
 
 // The Atomic class

@@ -14,5 +14,8 @@
 class AngleStub: public Angle
 {
 public:
-   AngleStub(){};
+   AngleStub()
+   {
+      setDegrees(45);
+   };
 };

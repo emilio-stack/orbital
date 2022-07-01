@@ -52,3 +52,22 @@ bool Angle :: closeEnough(double computedValue, double hardcodeValue) const
 {
    return abs(computedValue - hardcodeValue) < 0.0005;
 }
+
+/***********************************************************************
+ * ASSIGNMENT OPERATOR
+ * A method to overload the assignment operator.
+ ************************************************************************/
+Angle& Angle::operator= (const Angle& rhs)
+{
+   angle = rhs.angle;
+   return *this;
+}
+
+/***********************************************************************
+ * EQUIVALANCE OPERATOR
+ * A method to overload the assignment operator.
+ ************************************************************************/
+bool Angle::operator== (const Angle& rhs)
+{
+   return (angle == rhs.angle);
+}

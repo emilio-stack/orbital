@@ -18,7 +18,14 @@
  ****************************************************************/
 void testRunner()
 {
+   std::cout << "Begin Unit Tests:\n";
+   std::cout << "Position Tests Start\n";
    TestPosition().run();
+   std::cout << "Position Tests Passed\n";
+   std::cout << "Angle Tests Start\n";
    TestAngle().run();
+   std::cout << "Angle Tests Passed\n";
+   std::cout << "Satellite Tests Start\n";
    TestSatellite().run();
+   std::cout << "Satellite Tests Passed\n";
 }

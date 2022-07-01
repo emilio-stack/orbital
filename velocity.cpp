@@ -49,9 +49,18 @@ void Velocity::applyAcceleration(Acceleration accel, double time)
  * ASSIGNMENT OPERATOR
  * A method to overload the assignment operator.
  ************************************************************************/
-const Velocity & Velocity::operator= (Velocity & rhs)
+Velocity & Velocity::operator= (const Velocity & rhs)
 {
    velocityX = rhs.getVelocityX();
    velocityY = rhs.getVelocityY();
-   return (*this);
+   return *this;
+}
+
+/***********************************************************************
+ * EQUIVALANCE OPERATOR
+ * A method to overload the assignment operator.
+ ************************************************************************/
+bool Velocity::operator== (const Velocity& rhs)
+{
+   return (velocityX == rhs.velocityX && velocityY == rhs.velocityY);
 }

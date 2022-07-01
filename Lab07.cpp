@@ -16,6 +16,7 @@
 #include "uiDraw.h"     // for RANDOM and DRAW*
 #include "position.h"      // for POINT
 #include "satellite.h"
+#include "test.h"
 using namespace std;
 
 /*************************************************************************
@@ -114,7 +115,7 @@ void callBack(const Interface* pUI, void* p)
    //
    Position pt;
    drawEarth(pt, pDemo->angleEarth);
-   drawGPS(pDemo->satellite.getPosition(), pDemo->satellite.getAngle());
+   drawGPS(pDemo->satellite.getPosition(), pDemo->satellite.getAngle().getRadian());
 
    /*
    drawCrewDragon(pDemo->ptCrewDragon, pDemo->angleShip);
@@ -153,6 +154,8 @@ int main(int argc, char** argv)
 
    // Initialize the demo
    Demo demo(ptUpperRight);
+
+   testRunner();
 
    // set everything into action
    ui.run(callBack, &demo);

@@ -33,11 +33,12 @@ public:
    
    // mutators
    virtual void applyAcceleration(Acceleration accel, double time);
-   void setX(double value) { velocityX = value; }
-   void setY(double value) { velocityY = value; }
+   void setDX(double value) { velocityX = value; }
+   void setDY(double value) { velocityY = value; }
    
    // operators
-   const Velocity & operator= (Velocity & rhs);
+   Velocity & operator= (const Velocity & rhs);
+   bool operator== (const Velocity& rhs);
    
 protected:
    double velocityX;    // The horizontal velocity

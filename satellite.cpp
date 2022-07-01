@@ -65,7 +65,7 @@ double computeGravity(double h)
  *************************************************************************/
 double computeGravityDirection(double xS, double yS)
 {
-//   return atan2(-xS, -yS);  /* -xS is same thing as 0.0 - xS */
+   //   return atan2(-xS, -yS);  /* -xS is same thing as 0.0 - xS */
    return atan2(xS, yS); // why does this work and not the line above
 }
 
@@ -144,22 +144,37 @@ void Satellite::update()
    double angle = computeGravityDirection(position.getMetersX(), position.getMetersY());
    double accelerationX = calcHorComp(gravity, angle);
    double accelerationY = calcVertComp(gravity, angle);
-   
-   double velocityX = calcVelocity(initVelocityX,  accelerationX);
-   double velocityY = calcVelocity(initVelocityY,  accelerationY);
-   
+
+   double velocityX = calcVelocity(initVelocityX, accelerationX);
+   double velocityY = calcVelocity(initVelocityY, accelerationY);
+
    double additX = velocityX * sin(angle);
    double additY = velocityY * cos(angle);
-   
+
    double totalVelX = additX + velocityX;
    double totalVelY = additY + velocityY;
-   
+
    double newX = calcDistance(position.getMetersX(), totalVelX, accelerationX);
    double newY = calcDistance(position.getMetersY(), totalVelY, accelerationY);
-   
+
    // Update
    position.setMeters(newX, newY);
-   currentAngle = angle;
+   this->angle.setRadian(angle);
+   velocity.setDX(velocityX);
+   velocity.setDY(velocityY);
    initVelocityX = velocityX;
    initVelocityY = velocityY;
+}
+
+void Satellite::accelerate(bool accelerate)
+{
+   if (accelerate)
+      update();
+   else
+   {
+      velocity.setDX(-3100.0);
+      velocity.setDY(-10.7708);
+      position.setMetersX(-148800.0);
+      position.setMetersY(42163224.503522);
+   }
 }

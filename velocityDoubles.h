@@ -33,5 +33,9 @@ class VelocityFake: public Velocity
 {
 public:
    // constructor
-   VelocityFake(){};
+   VelocityFake()
+   {
+      setDX(-3100.0);
+      setDY(0.0);
+   };
 };

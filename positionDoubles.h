@@ -20,7 +20,7 @@ class PositionDummy: public Position
 {
 public:
    // constructor
-   PositionDummy(){};
+   PositionDummy() {};
 };
 
 /***********************************************************************
@@ -32,6 +32,10 @@ class PositionFake: public Position
 {
 public:
    // constructor
-   PositionFake(){};
+   PositionFake()
+   {
+      setMetersX(0.0);
+      setMetersY(42164000.0);
+   };
 };
 

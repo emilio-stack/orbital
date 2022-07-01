@@ -10,5 +10,15 @@
 class Explosion
 {
 public:
-   Explosion(){};
+   Explosion() : fragments(0.0), parts(0) {};
+
+   float getFragments() const { return fragments; };
+   float getParts() const { return parts; };
+
+   void setFragments(float fragments) { this->fragments = fragments; };
+   void setParts(float parts) { this->parts = parts; };
+
+private:
+   float fragments;
+   float parts;
 };

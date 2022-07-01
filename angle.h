@@ -11,6 +11,8 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 
+#define M_PI       3.14159265358979323846   // pi
+
 class Angle
 {
 public:
@@ -33,7 +35,10 @@ public:
    // Updaters
    void addDegrees(double amount) { setDegrees(normalize(angle + amount)); };
    void addRadian(double amount) { addDegrees(degreesFromRadian(amount)); };
-   
+
+   // Overloads
+   Angle& operator= (const Angle& rhs);
+   bool operator== (const Angle& rhs);
    
 private:
    double angle;  // The angle stored in degrees
