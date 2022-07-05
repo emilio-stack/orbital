@@ -27,8 +27,8 @@ public:
    Velocity(Velocity initVelocity, Acceleration accel, double time);
    
    // getters
-   virtual double getVelocityX() const { return velocityX; }
-   virtual double getVelocityY() const { return velocityY; }
+   virtual double getX() const { return velocityX; }
+   virtual double getY() const { return velocityY; }
    virtual double getSpeed() const;
    
    // mutators

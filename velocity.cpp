@@ -20,8 +20,8 @@
  ************************************************************************/
 Velocity::Velocity(Velocity initVelocity, Acceleration accel, double time)
 {
-   velocityX = initVelocity.getVelocityX();
-   velocityY = initVelocity.getVelocityY();
+   velocityX = initVelocity.getX();
+   velocityY = initVelocity.getY();
    this->applyAcceleration(accel, time);
 }
 
@@ -51,7 +51,7 @@ void Velocity::applyAcceleration(Acceleration accel, double time)
  ************************************************************************/
 const Velocity & Velocity::operator= (Velocity & rhs)
 {
-   velocityX = rhs.getVelocityX();
-   velocityY = rhs.getVelocityY();
+   velocityX = rhs.getX();
+   velocityY = rhs.getY();
    return (*this);
 }

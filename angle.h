@@ -43,5 +43,5 @@ private:
    double radianFromDegrees(double degrees) const { return degrees * M_PI / 180; };
    double degreesFromXY(double x, double y) const { return degreesFromRadian(atan2(x, y)); }
    double normalize(double angle);
-   bool closeEnough(double computedValue, double hardcodeValue) const;
+   bool   closeEnough(double computedValue, double hardcodeValue) const;
 };
