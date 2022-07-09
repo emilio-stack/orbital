@@ -6,9 +6,11 @@
  * 3. Assignment Description:
  *      Simulate satellites orbiting the earth
  * 4. What was the hardest part? Be as specific as possible.
- *      ??
+ *      The hardest part was debugging why the orbits were not updating correctly.
+ *      It seemed that gravity was not applied correctly. But there was a problem with the angle updates.
+ *      Next was figuring out why I had bad access all the time but this was later explained to me.
  * 5. How long did it take for you to complete the assignment?
- *      ??
+ *      ~16 hours
  *****************************************************************/
 
 #include "test.h"       // for TEST RUNNER
