@@ -11,8 +11,8 @@
 #pragma once
 
 #include <cassert>
-#include "position.h"
-#include "uiDraw.h"  // for ogstream
+#include "position.h"   // for POSITION
+#include "uiDraw.h"     // for OGSTREAM
 
 using namespace std;
 

@@ -8,9 +8,10 @@
  *    class is to get the orbit working in the simulator
  ************************************************************************/
 
-// offset is 0 when there it is not attached to a parent
-// but the parent sets the offset when it is attached and called in the parent draw.
-// possibly implement list over vector
+/**
+ * TODO: offset is 0 when there it is not attached to a parent but the parent sets the offset when it is attached and called in the parent draw.
+ * TODO: implement expiration of projectille and fragment
+ */
 
 #pragma once
 
@@ -258,7 +259,7 @@ class GPSRight: public AtomicSatellite
 {
 public:
    using AtomicSatellite :: AtomicSatellite;
-   // TODO: what is offset in draw gps right?
+   
    void draw() const { drawGPSRight(position, angularVelocity, position); }
 };
 
@@ -271,7 +272,7 @@ class GPSLeft: public AtomicSatellite
 {
 public:
    using AtomicSatellite :: AtomicSatellite;
-   // TODO: what is offset in draw gps left?
+   
    void draw() const { drawGPSRight(position, angularVelocity, position); }
 };
 
@@ -284,7 +285,7 @@ class HubbleTelescope: public AtomicSatellite
 {
 public:
    using AtomicSatellite :: AtomicSatellite;
-   // TODO: what is offset?
+   
    void draw() const { drawHubbleTelescope(position, angularVelocity); }
 };
 
@@ -297,7 +298,7 @@ class HubbleComputer: public AtomicSatellite
 {
 public:
    using AtomicSatellite :: AtomicSatellite;
-   // TODO: what is offset?
+   
    void draw() const { drawHubbleComputer(position, angularVelocity); }
 };
 
@@ -310,7 +311,7 @@ class HubbleLeft: public AtomicSatellite
 {
 public:
    using AtomicSatellite :: AtomicSatellite;
-   // TODO: what is offset?
+   
    void draw() const { drawHubbleLeft(position, angularVelocity); }
 };
 
@@ -323,7 +324,7 @@ class HubbleRight: public AtomicSatellite
 {
 public:
    using AtomicSatellite :: AtomicSatellite;
-   // TODO: what is offset?
+   
    void draw() const { drawHubbleRight(position, angularVelocity); }
 };
 
@@ -352,7 +353,7 @@ class DragonRight: public AtomicSatellite
 {
 public:
    using AtomicSatellite :: AtomicSatellite;
-   // TODO: what is offset?
+   
    // Upon collision create parts & fragments if any
    virtual void destroy(std::vector<Satellite *> & satellites) const;
    
@@ -368,7 +369,7 @@ class DragonLeft: public AtomicSatellite
 {
 public:
    using AtomicSatellite :: AtomicSatellite;
-   // TODO: what is offset?
+   
    // Upon collision create parts & fragments if any
    virtual void destroy(std::vector<Satellite *> & satellites) const;
    
@@ -384,7 +385,7 @@ class StarlinkBody: public AtomicSatellite
 {
 public:
    using AtomicSatellite :: AtomicSatellite;
-   // TODO: what is offset?
+   
    void draw() const { drawStarlinkBody(position, angularVelocity); }
 };
 
@@ -397,6 +398,6 @@ class StarlinkArray: public AtomicSatellite
 {
 public:
    using AtomicSatellite :: AtomicSatellite;
-   // TODO: what is offset?
+   
    void draw() const { drawStarlinkArray(position, angularVelocity); }
 };

@@ -10,9 +10,8 @@
 
 #pragma once
 
-#include "Position.h"
-#include "constants.h"
-//const double TIME_DILATION = 24.0 * 60.0; /* 24 hours in a day X 60 minutes in an hour */
+#include "Position.h"      // for POSITION
+#include "constants.h"     // for CONSTANTS
 
 class Earth
 {

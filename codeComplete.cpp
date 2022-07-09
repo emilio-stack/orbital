@@ -1,6 +1,6 @@
 /*************************************************************
  * 1. Name:
- *      Demo
+ *      Emilio Regino & Bradley Payne
  * 2. Assignment Name:
  *      Lab 07: Orbit Simulator
  * 3. Assignment Description:
@@ -11,104 +11,9 @@
  *      ??
  *****************************************************************/
 
-#include <cassert>      // for ASSERT
-#include "uiInteract.h" // for INTERFACE
-#include "uiDraw.h"     // for RANDOM and DRAW*
-#include "position.h"   // for POINT
 #include "test.h"       // for TEST RUNNER
-#include "earth.h"      // for EARTH
-#include "star.h"       // for STAR
-#include "satellite.h"  // for SATELLITE *
-#include "constants.h"  // for CONSTANTS *
-#include <vector>       // for VECTOR
-#include <list>         // for LIST
+#include "simulator.h"  // for SIMULATOR
 using namespace std;
-
-/*************************************************************************
- * Demo
- * Test structure to capture the LM that will move around the screen
- *************************************************************************/
-class Demo
-{
-public:
-   Demo(Position ptUpperRight) :
-   ptUpperRight(ptUpperRight)
-   {
-      // initialize the stars
-      for (int i = 0; i < NUM_STARS; i++)
-      {
-         stars[i] = Star(ptUpperRight);
-      }
-      
-      // initialize all the satellites
-      Satellite * ship = new Ship;
-      Satellite * sputnik = new Sputnik;
-      Satellite * gps1 = new GPS (Position(0.0, 26560000.0), Velocity(-3880.0, 0.0));
-      Satellite * gps2 = new GPS (Position(23001634.72, 13280000.0), Velocity(-1940.00, 3360.18));
-      Satellite * gps3 = new GPS (Position(23001634.72, -13280000.0), Velocity(1940.00, 3360.18));
-      Satellite * gps4 = new GPS (Position(0.0, -26560000.0), Velocity(0.0, -26560000.0));
-      Satellite * gps5 = new GPS (Position(23001634.72, -13280000.0), Velocity(1940.00, -3360.18));
-      Satellite * gps6 = new GPS (Position(-23001634.72, 13280000.0), Velocity( -1940.00, -3360.18));
-      Satellite * hubble = new Hubble;
-      Satellite * dragon = new Dragon;
-      Satellite * starlink = new Starlink;
-
-      satellites.push_back(ship);
-      satellites.push_back(sputnik);
-      satellites.push_back(hubble);
-      satellites.push_back(dragon);
-      satellites.push_back(starlink);
-      satellites.push_back(gps1);
-      satellites.push_back(gps2);
-      satellites.push_back(gps3);
-      satellites.push_back(gps4);
-      satellites.push_back(gps5);
-      satellites.push_back(gps6);
-   }
-   
-   void input(const Interface* pUI)
-   {
-      // only the ship handles input
-      // ship should be the first element
-      satellites[0]->input(pUI, satellites);
-   }
-   
-   void update()
-   {
-      // update the earth
-      earth.update();
-      
-      // update all satellites
-      for (int i = 0; i < satellites.size(); i++)
-      {
-         satellites[i]->update(TIME_PER_FRAME);
-      }
-      
-      // handle collisions
-      // first create new satellites
-      // then destroy collided satellites
-   }
-   
-   void draw()
-   {
-      // first draw the stars
-      for (int currentStar = 0; currentStar < NUM_STARS; currentStar++)
-         stars[currentStar].draw();
-      
-      // then the earth
-      earth.draw();
-      
-      // then the satellites
-      for (int i = 0; i < satellites.size(); i++)
-         satellites[i]->draw();
-   }
-
-private:
-   Earth earth;
-   vector<Satellite *> satellites;
-   Position ptUpperRight;
-   Star stars[NUM_STARS];     // the star array
-};
 
 /*************************************
  * All the interesting work happens here, when
@@ -121,7 +26,7 @@ void callBack(const Interface* pUI, void* p)
 {
    // the first step is to cast the void pointer into a game object. This
    // is the first step of every single callback function in OpenGL.
-   Demo* pDemo = (Demo*)p;
+   Simulator* pDemo = (Simulator*)p;
    
    pDemo->input(pUI);
    pDemo->draw();
@@ -158,7 +63,7 @@ int main(int argc, char** argv)
       ptUpperRight);
 
    // Initialize the demo
-   Demo demo(ptUpperRight);
+   Simulator demo(ptUpperRight);
 
    // set everything into action
    ui.run(callBack, &demo);

@@ -69,19 +69,9 @@ Star :: Star()
  * and max height.
  *************************************************************************/
 Star :: Star(const Position& ptBoundary)
-{
-//   int maxHeight = ptBoundary.getMetersY() * 0.95;   // The max height a star can have is 95% of the height of the screen
-//   int minHeight = ptBoundary.getMetersY() * 0.50;   // The min height a star can have is 50% of the height of the screen
-   
+{   
    position.setMetersX(random(-ptBoundary.getMetersX(), ptBoundary.getMetersX()));
    position.setMetersY(random(-ptBoundary.getMetersY(), ptBoundary.getMetersY()));
-   
-   
-//   position.setMeters(21082000.0, 36515095.0);
-//   position.setPixelsX(60);
-//   position.setPixelsY(60);
-   
-   
    phase = random(0, 255);
 }
 
