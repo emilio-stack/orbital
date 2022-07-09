@@ -63,7 +63,9 @@ void Satellite :: update(double time)
 //   std::cout << "Velocity:      " << velocity.getX() << ", " << velocity.getY() << std::endl;
    position.update(velocity, gravity, time);
    
-   std::cout << std::endl;
+   angle.addRadian(angularVelocity);
+   
+//   std::cout << std::endl;
 }
 
 /*************************************************************************
@@ -296,25 +298,26 @@ void Ship :: destroy(std::vector<Satellite *> & satellites) const
  *    Right: rotate right by 0.1 radians
  *    Space: shoot projectile
  **********************************************************************/
-void Ship :: input(Interface ui, std::vector<Satellite *> & satellites)
+void Ship :: input(const Interface* pUI, std::vector<Satellite *> & satellites)
 {
    // left & right input
-   angle.addRadian((ui.isRight() ? 0.1 : 0.0) + (ui.isLeft() ? -0.1 : 0.0));
+   angularVelocity += (pUI->isRight() ? 0.1 : 0.0) + (pUI->isLeft() ? -0.1 : 0.0);
    
    // down input
-   if (ui.isDown())
+   if (pUI->isDown())
    {
       thrust = true;
       Acceleration addidtionalAccel (angle, 30.0);
       velocity.applyAcceleration(addidtionalAccel, TIME_PER_FRAME);
-   }
+   } else
+      thrust = false;
 
    // space input
-   if (ui.isSpace())
+   if (pUI->isSpace())
    {
       Velocity vBullet (angle, 9000.0);
-      Projectile bullet(*this, vBullet);
-      satellites.push_back(&bullet);
+      Satellite * pBullet = new Projectile (*this, vBullet);
+      satellites.push_back(pBullet);
    }
 }
 

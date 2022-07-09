@@ -34,7 +34,6 @@ public:
    Demo(Position ptUpperRight) :
    ptUpperRight(ptUpperRight)
    {
-      std::cout << endl;
       // initialize the stars
       for (int i = 0; i < NUM_STARS; i++)
       {
@@ -65,6 +64,13 @@ public:
       satellites.push_back(gps4);
       satellites.push_back(gps5);
       satellites.push_back(gps6);
+   }
+   
+   void input(const Interface* pUI)
+   {
+      // only the ship handles input
+      // ship should be the first element
+      satellites[0]->input(pUI, satellites);
    }
    
    void update()
@@ -117,6 +123,7 @@ void callBack(const Interface* pUI, void* p)
    // is the first step of every single callback function in OpenGL.
    Demo* pDemo = (Demo*)p;
    
+   pDemo->input(pUI);
    pDemo->draw();
    pDemo->update();
 

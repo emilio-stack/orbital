@@ -40,6 +40,7 @@ public:
    // accessors
    Position getPosition()  const { return position;   }
    Velocity getVelocity()  const { return velocity;   }
+   double getAngle() const { return angle.getDegrees(); }
    double getRadius()      const { return radius;     }
    bool isDead()           const { return dead;       }
 
@@ -52,7 +53,7 @@ public:
    // input & output
    virtual void draw() const = 0;
    virtual void destroy(std::vector<Satellite *> & satellites) const = 0;
-   virtual void input(Interface ui, std::vector<Satellite *> & satellites)
+   virtual void input(const Interface* pUI, std::vector<Satellite *> & satellites)
    { /* all satellites ignore input except for ship */ }
    
 protected:
@@ -155,12 +156,12 @@ public:
    Ship();
    
    // Handle input
-   void input(Interface ui, std::vector<Satellite *> & satellites);
+   void input(const Interface* pUI, std::vector<Satellite *> & satellites);
    
    // Upon collision create parts & fragments if any
    void destroy(std::vector<Satellite *> & satellites) const;
    
-   void draw() const { drawShip(position, angularVelocity, thrust); }
+   void draw() const { drawShip(position, angle.getRadian(), thrust); }
    
 private:
    bool thrust;   // is the ship thrusting
