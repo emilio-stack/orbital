@@ -180,14 +180,10 @@ double calcVelocity(double velocityInit, double acceleration)
    return velocityInit + (acceleration * time);
 }
 
-
-/*************************************************************************
- * Main
- * Figure out the math for the orbital simulator
- *************************************************************************/
-int main(int argc, const char * argv[]) {
-   double x = 21082000.0;
-   double y = 36515095.0;
+void play(double & i, double & j)
+{
+   double x = i;
+   double y = j;
    double altitude = computeAltitude(x, y);
    double gravity = computeGravity(altitude);
    double direction = computeGravPullDirection(x, y);
@@ -198,18 +194,39 @@ int main(int argc, const char * argv[]) {
    double newX = calcDistance(x, velocityX, horizontal);
    double newY = calcDistance(y, velocityY, vertical);
    
-   cout << "Time Dilation:  " << getTimeDilation()    << endl;
-   cout << "Time Per Frame: " << getTimePerFrame()    << endl;
-   cout << "Rotation Speed: " << getRotationSpeed()   << endl;
-   cout << "Altitude:       " << altitude             << endl;
-   cout << "Grav:           " << gravity              << endl;
-   cout << "Grav Direction: " << direction            << endl;
-   cout << "Horizontal:     " << horizontal           << endl;
-   cout << "Vertical:       " << vertical             << endl;
-   cout << "Velocity X:     " << velocityX            << endl;
-   cout << "Velocity Y:     " << velocityY            << endl;
-   cout << "New X Position: " << newX                 << endl;
-   cout << "New Y Position: " << newY                 << endl;
+//   cout << "Time Dilation:  " << getTimeDilation()    << endl;
+//   cout << "Time Per Frame: " << getTimePerFrame()    << endl;
+//   cout << "Rotation Speed: " << getRotationSpeed()   << endl;
+//   cout << "Altitude:       " << altitude             << endl;
+//   cout << "Grav:           " << gravity              << endl;
+//   cout << "AccelY:       " << vertical             << endl;
+//   cout << "Velocity X:     " << velocityX            << endl;
+//   cout << "Velocity Y:     " << velocityY            << endl;
+//   cout << "New Y Position: " << newY                 << endl;
+
+   cout << "Position:      " << newX << ", " << newY << endl;
+   cout << "Altitude:      " << altitude             << endl;
+   cout << "Magnitude:     " << gravity              << endl;
+   cout << "Angle:         " << direction            << endl;
+   cout << "Gravity:       " << horizontal << ", " << vertical << endl;
+   cout << "Velocity:      " << velocityX << ", " << velocityY << endl;
+   cout << endl;
+   
+   
+   i = newX;
+   j = newY;
+}
+
+/*************************************************************************
+ * Main
+ * Figure out the math for the orbital simulator
+ *************************************************************************/
+int main(int argc, const char * argv[]) {
+   
+   double x = 21082000.0;
+   double y = 36515095.0;
+   while (true)
+      play(x, y);
    
    return 0;
 }

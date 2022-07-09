@@ -52,11 +52,18 @@ Satellite :: Satellite(Position pos, Velocity init, double rad)
  **********************************************************************/
 void Satellite :: update(double time)
 {
+//   std::cout << "Position:      " << position << std::endl;
    double gravityMagnitude = computeGravity();
+//   std::cout << "Magnitude:     " << gravityMagnitude              << std::endl;
+   angle = Angle(position.getMetersX(), position.getMetersY());
+//   std::cout << "Angle:         " << angle.getRadian() << std::endl;
    Acceleration gravity(angle, gravityMagnitude);
-   std::cout << "Gravity: " << gravity.getX() << ", "<< gravity.getY() << std::endl;
+//   std::cout << "Gravity:       " << gravity.getX() << ", " << gravity.getY() << std::endl;
    velocity.applyAcceleration(gravity, time);
+//   std::cout << "Velocity:      " << velocity.getX() << ", " << velocity.getY() << std::endl;
    position.update(velocity, gravity, time);
+   
+   std::cout << std::endl;
 }
 
 /*************************************************************************
@@ -74,6 +81,7 @@ void Satellite :: update(double time)
 double Satellite :: computeGravity() const
 {
    double h = computeAltitude();
+//   std::cout << "Altitude:      " << h  << std::endl;
    return GRAVITY * ((EARTH_RADIUS / (EARTH_RADIUS + h)) * (EARTH_RADIUS / (EARTH_RADIUS + h)));
 }
 

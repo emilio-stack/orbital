@@ -34,43 +34,37 @@ public:
    Demo(Position ptUpperRight) :
    ptUpperRight(ptUpperRight)
    {
+      std::cout << endl;
       // initialize the stars
       for (int i = 0; i < NUM_STARS; i++)
       {
          stars[i] = Star(ptUpperRight);
       }
       
-//      Satellite * gpsExample = new GPS(Position(21082000.0, 36515095), Velocity(-2685.0, 1550.0));
-//      satellites.push_back(gpsExample);
-      
-      Satellite * gpsExample = new GPS(Position(-6378000.0, 0.0), Velocity(0.0, 0.0));
-      satellites.push_back(gpsExample);
-      
-      
-//      // initialize all the satellites
-//      Satellite * ship = new Ship;
-//      Satellite * sputnik = new Sputnik;
-//      Satellite * gps1 = new GPS (Position(0.0, 26560000.0), Velocity(-3880.0, 0.0));
-//      Satellite * gps2 = new GPS (Position(23001634.72, 13280000.0), Velocity(-1940.00, 3360.18));
-//      Satellite * gps3 = new GPS (Position(23001634.72, -13280000.0), Velocity(1940.00, 3360.18));
-//      Satellite * gps4 = new GPS (Position(0.0, -26560000.0), Velocity(0.0, -26560000.0));
-//      Satellite * gps5 = new GPS (Position(23001634.72, -13280000.0), Velocity(1940.00, -3360.18));
-//      Satellite * gps6 = new GPS (Position(-23001634.72, 13280000.0), Velocity( -1940.00, -3360.18));
-//      Satellite * hubble = new Hubble;
-//      Satellite * dragon = new Dragon;
-//      Satellite * starlink = new Starlink;
-//
-//      satellites.push_back(ship);
-//      satellites.push_back(sputnik);
-//      satellites.push_back(hubble);
-//      satellites.push_back(dragon);
-//      satellites.push_back(starlink);
-//      satellites.push_back(gps1);
-//      satellites.push_back(gps2);
-//      satellites.push_back(gps3);
-//      satellites.push_back(gps4);
-//      satellites.push_back(gps5);
-//      satellites.push_back(gps6);
+      // initialize all the satellites
+      Satellite * ship = new Ship;
+      Satellite * sputnik = new Sputnik;
+      Satellite * gps1 = new GPS (Position(0.0, 26560000.0), Velocity(-3880.0, 0.0));
+      Satellite * gps2 = new GPS (Position(23001634.72, 13280000.0), Velocity(-1940.00, 3360.18));
+      Satellite * gps3 = new GPS (Position(23001634.72, -13280000.0), Velocity(1940.00, 3360.18));
+      Satellite * gps4 = new GPS (Position(0.0, -26560000.0), Velocity(0.0, -26560000.0));
+      Satellite * gps5 = new GPS (Position(23001634.72, -13280000.0), Velocity(1940.00, -3360.18));
+      Satellite * gps6 = new GPS (Position(-23001634.72, 13280000.0), Velocity( -1940.00, -3360.18));
+      Satellite * hubble = new Hubble;
+      Satellite * dragon = new Dragon;
+      Satellite * starlink = new Starlink;
+
+      satellites.push_back(ship);
+      satellites.push_back(sputnik);
+      satellites.push_back(hubble);
+      satellites.push_back(dragon);
+      satellites.push_back(starlink);
+      satellites.push_back(gps1);
+      satellites.push_back(gps2);
+      satellites.push_back(gps3);
+      satellites.push_back(gps4);
+      satellites.push_back(gps5);
+      satellites.push_back(gps6);
    }
    
    void update()
@@ -82,7 +76,6 @@ public:
       for (int i = 0; i < satellites.size(); i++)
       {
          satellites[i]->update(TIME_PER_FRAME);
-         cout << "Position" << satellites[i]->getPosition() << endl;
       }
       
       // handle collisions
