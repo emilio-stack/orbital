@@ -11,8 +11,8 @@
 #pragma once
 
 #include "Position.h"
-
-const double TIME_DILATION = 24.0 * 60.0; /* 24 hours in a day X 60 minutes in an hour */
+#include "constants.h"
+//const double TIME_DILATION = 24.0 * 60.0; /* 24 hours in a day X 60 minutes in an hour */
 
 class Earth
 {
@@ -23,6 +23,7 @@ public:
    // getters
    double getAngle() { return angle; }
    Position getPosition() { return position; }
+   void draw() const { drawEarth(position, angle); }
    
    // modifers
    void update() { angle += -(2.0 * M_PI / 30.0) * (TIME_DILATION / 86400.0); }

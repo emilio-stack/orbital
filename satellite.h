@@ -8,6 +8,10 @@
  *    class is to get the orbit working in the simulator
  ************************************************************************/
 
+// offset is 0 when there it is not attached to a parent
+// but the parent sets the offset when it is attached and called in the parent draw.
+// possibly implement list over vector
+
 #pragma once
 
 #include "position.h"      // for POSITION
@@ -15,6 +19,8 @@
 #include "velocity.h"      // for VELOCITY
 #include "uiDraw.h"        // for DRAW *
 #include "uiInteract.h"    // for INTERFACE
+#include "constants.h"     // for CONSTANTS
+#include <vector>          // for VECTOR
 
 /**********************************************************************
  * SATELLITE
@@ -29,10 +35,11 @@ public:
    
    // constructor
    Satellite();
-   Satellite(Position pos);
+   Satellite(Position pos, Velocity init, double radius = 0.0);
    
    // accessors
    Position getPosition()  const { return position;   }
+   Velocity getVelocity()  const { return velocity;   }
    double getRadius()      const { return radius;     }
    bool isDead()           const { return dead;       }
 
@@ -44,22 +51,23 @@ public:
    
    // input & output
    virtual void draw() const = 0;
-   virtual void input(Interface ui) { /* all satellites ignore input except for ship */ }
-   virtual void destroy(Satellite & satellites) const = 0;  
+   virtual void destroy(std::vector<Satellite *> & satellites) const = 0;
+   virtual void input(Interface ui, std::vector<Satellite *> & satellites)
+   { /* all satellites ignore input except for ship */ }
    
 protected:
    Position position;               // the position of the satellite
    Angle angle;                     // the angle of the satellite
    Velocity velocity;               // the velocity of the satellite
-   double angularVelocity;          // the speed of rotation in the satellite's angle
+   double angularVelocity;          // the speed of rotation of the satellite
    bool dead;                       // the dead/alive state of the satellite
-   double radius;                   // the radius of the satellite
+   double radius;                   // the radius of the satellite in pixels
    
 private:
    double computeGravity() const;
    double computeAltitude() const;
+   bool closeEnough(double computedValue, double hardcodeValue) const;
 };
-
 
 /**********************************************************************
  * SPUTNIK SATELLITE
@@ -68,10 +76,10 @@ private:
 class Sputnik: public Satellite
 {
 public:
-   using Satellite :: Satellite;
+   Sputnik();
    
    // Upon collision create parts & fragments if any
-   virtual void destroy(Satellite & satellites) const;
+   void destroy(std::vector<Satellite *> & satellites) const;
    
    void draw() const { drawSputnik(position, angularVelocity); }
 };
@@ -84,9 +92,10 @@ class GPS: public Satellite
 {
 public:
    using Satellite :: Satellite;
+   GPS(Position pos, Velocity init);
    
    // Upon collision create parts & fragments if any
-   virtual void destroy(Satellite & satellites) const {};
+   void destroy(std::vector<Satellite *> & satellites) const;
    
    void draw() const { drawGPS(position, angularVelocity); }
 };
@@ -98,10 +107,10 @@ public:
 class Hubble: public Satellite
 {
 public:
-   using Satellite :: Satellite;
+   Hubble();
    
    // Upon collision create parts & fragments if any
-   virtual void destroy(Satellite & satellites) const;
+   void destroy(std::vector<Satellite *> & satellites) const;
    
    void draw() const { drawHubble(position, angularVelocity); }
 };
@@ -113,10 +122,10 @@ public:
 class Dragon: public Satellite
 {
 public:
-   using Satellite :: Satellite;
+   Dragon();
    
    // Upon collision create parts & fragments if any
-   virtual void destroy(Satellite & satellites) const;
+   void destroy(std::vector<Satellite *> & satellites) const;
    
    void draw() const { drawCrewDragon(position, angularVelocity); }
 };
@@ -128,10 +137,10 @@ public:
 class Starlink: public Satellite
 {
 public:
-   using Satellite :: Satellite;
+   Starlink();
    
    // Upon collision create parts & fragments if any
-   virtual void destroy(Satellite & satellites) const;
+   void destroy(std::vector<Satellite *> & satellites) const;
    
    void draw() const { drawStarlink(position, angularVelocity); }
 };
@@ -143,10 +152,13 @@ public:
 class Ship: public Satellite
 {
 public:
-   using Satellite :: Satellite;
+   Ship();
+   
+   // Handle input
+   void input(Interface ui, std::vector<Satellite *> & satellites);
    
    // Upon collision create parts & fragments if any
-   virtual void destroy(Satellite & satellites) const;
+   void destroy(std::vector<Satellite *> & satellites) const;
    
    void draw() const { drawShip(position, angularVelocity, thrust); }
    
@@ -167,10 +179,10 @@ public:
    
    // constructor
    using Satellite :: Satellite;   // TODO: how do inheritance constructors work?
-   AtomicSatellite(Satellite & parent, Angle ang);
+   AtomicSatellite(const Satellite & parent, Angle shootOff, double rad);
    
    // Upon collision create parts & fragments if any
-   virtual void destroy(Satellite & satellites) const
+   virtual void destroy(std::vector<Satellite *> & satellites) const
    { /* Atomics do not break into more satellites */}
 };
 
@@ -208,6 +220,7 @@ class Fragment: public ExpiringSatellite
 {
 public:
    using ExpiringSatellite :: ExpiringSatellite;
+   Fragment(const Satellite & parent, Angle shootOff);
    void draw() const { drawFragment(position, angularVelocity); }
 };
 
@@ -219,6 +232,7 @@ class Projectile: public ExpiringSatellite
 {
 public:
    using ExpiringSatellite :: ExpiringSatellite;
+   Projectile(const Ship & parent, Velocity bullet);
    void draw() const { drawProjectile(position); }
 };
 
@@ -244,7 +258,7 @@ class GPSRight: public AtomicSatellite
 public:
    using AtomicSatellite :: AtomicSatellite;
    // TODO: what is offset in draw gps right?
-   void draw() const { drawGPSRight(position, position, angularVelocity); }
+   void draw() const { drawGPSRight(position, angularVelocity, position); }
 };
 
 /**********************************************************************
@@ -257,6 +271,7 @@ class GPSLeft: public AtomicSatellite
 public:
    using AtomicSatellite :: AtomicSatellite;
    // TODO: what is offset in draw gps left?
+   void draw() const { drawGPSRight(position, angularVelocity, position); }
 };
 
 /**********************************************************************
@@ -269,6 +284,7 @@ class HubbleTelescope: public AtomicSatellite
 public:
    using AtomicSatellite :: AtomicSatellite;
    // TODO: what is offset?
+   void draw() const { drawHubbleTelescope(position, angularVelocity); }
 };
 
 /**********************************************************************
@@ -281,6 +297,7 @@ class HubbleComputer: public AtomicSatellite
 public:
    using AtomicSatellite :: AtomicSatellite;
    // TODO: what is offset?
+   void draw() const { drawHubbleComputer(position, angularVelocity); }
 };
 
 /**********************************************************************
@@ -293,6 +310,7 @@ class HubbleLeft: public AtomicSatellite
 public:
    using AtomicSatellite :: AtomicSatellite;
    // TODO: what is offset?
+   void draw() const { drawHubbleLeft(position, angularVelocity); }
 };
 
 /**********************************************************************
@@ -305,6 +323,7 @@ class HubbleRight: public AtomicSatellite
 public:
    using AtomicSatellite :: AtomicSatellite;
    // TODO: what is offset?
+   void draw() const { drawHubbleRight(position, angularVelocity); }
 };
 
 /**********************************************************************
@@ -316,7 +335,11 @@ class DragonCenter: public AtomicSatellite
 {
 public:
    using AtomicSatellite :: AtomicSatellite;
-   // TODO: what is offset?
+   
+   // Upon collision create parts & fragments if any
+   virtual void destroy(std::vector<Satellite *> & satellites) const;
+   
+   void draw() const { drawCrewDragonCenter(position, angularVelocity); }
 };
 
 /**********************************************************************
@@ -329,6 +352,10 @@ class DragonRight: public AtomicSatellite
 public:
    using AtomicSatellite :: AtomicSatellite;
    // TODO: what is offset?
+   // Upon collision create parts & fragments if any
+   virtual void destroy(std::vector<Satellite *> & satellites) const;
+   
+   void draw() const { drawCrewDragonRight(position, angularVelocity); }
 };
 
 /**********************************************************************
@@ -341,8 +368,10 @@ class DragonLeft: public AtomicSatellite
 public:
    using AtomicSatellite :: AtomicSatellite;
    // TODO: what is offset?
-   // offset is 0 when there it is not attached to a parent
-   // but the parent sets the offset when it is attached and called in the parent draw.
+   // Upon collision create parts & fragments if any
+   virtual void destroy(std::vector<Satellite *> & satellites) const;
+   
+   void draw() const { drawCrewDragonLeft(position, angularVelocity); }
 };
 
 /**********************************************************************
@@ -355,6 +384,7 @@ class StarlinkBody: public AtomicSatellite
 public:
    using AtomicSatellite :: AtomicSatellite;
    // TODO: what is offset?
+   void draw() const { drawStarlinkBody(position, angularVelocity); }
 };
 
 /**********************************************************************
@@ -367,4 +397,5 @@ class StarlinkArray: public AtomicSatellite
 public:
    using AtomicSatellite :: AtomicSatellite;
    // TODO: what is offset?
+   void draw() const { drawStarlinkArray(position, angularVelocity); }
 };

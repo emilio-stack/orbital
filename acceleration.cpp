@@ -30,6 +30,19 @@ Acceleration::Acceleration(Angle angle, double magnitude)
  ************************************************************************/
 void Acceleration::addAcceleration(Acceleration otherAccel)
 {
-   accelX += otherAccel.getX();
-   accelY += otherAccel.getY();
+   x += otherAccel.getX();
+   y += otherAccel.getY();
 };
+
+/**********************************************************************
+ * CLOSE ENOUGH:
+ *    A method to tell if a computed value is close enough to
+ *    the precision we want.
+ * Arguments:
+ *    computedValue: The value calculated by the program
+ *    hardcodeValue: The value with acceptable precision
+ ***********************************************************************/
+bool Acceleration :: closeEnough(double computedValue, double hardcodeValue) const
+{
+   return abs(computedValue - hardcodeValue) < 0.0005;
+}

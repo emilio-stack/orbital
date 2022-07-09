@@ -25,6 +25,7 @@ public:
    Velocity(): velocityX(0.0), velocityY(0.0) {};
    Velocity(double velX, double velY): velocityX(velX), velocityY(velY) {};
    Velocity(Velocity initVelocity, Acceleration accel, double time);
+   Velocity(Angle angle, double magnitude);
    
    // getters
    virtual double getX() const { return velocityX; }
@@ -37,7 +38,19 @@ public:
    void setY(double value) { velocityY = value; }
    
    // operators
-   const Velocity & operator= (Velocity & rhs);
+   const Velocity& operator =  (const Velocity& rhs)
+   {
+      velocityX = rhs.getX();
+      velocityY = rhs.getY();
+      return (*this);
+   }
+   
+   const Velocity& operator += (const Velocity& rhs)
+   {
+      velocityX += rhs.getX();
+      velocityY += rhs.getY();
+      return *this;
+   }
    
 protected:
    double velocityX;    // The horizontal velocity

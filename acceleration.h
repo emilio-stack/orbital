@@ -20,21 +20,25 @@
 class Acceleration
 {
 public:
+   friend class TestAcceleration;
    // constructors
-   Acceleration(): accelX(0.0), accelY(0.0) {};
-   Acceleration(double x, double y): accelX(x), accelY(y) {};
+   Acceleration(): x(0.0), y(0.0) {};
+   Acceleration(double x, double y): x(x), y(y) {};
    Acceleration(Angle angle, double magnitude);
    
    // getters
-   virtual double getX() const { return accelX; }
-   virtual double getY() const { return accelY; }
+   virtual double getX() const { return x; }
+   virtual double getY() const { return y; }
    
    // mutators
    virtual void addAcceleration(Acceleration otherAccel);
-   void setX(double value) { accelX = value; }
-   void setY(double value) { accelY = value; }
+   void setX(double value) { x = value; }
+   void setY(double value) { y = value; }
    
 protected:
-   double accelX;    // the horizontal component of acceleration
-   double accelY;    // the vertical component of acceleration
+   double x;    // the horizontal component of acceleration
+   double y;    // the vertical component of acceleration
+   
+private:
+   bool closeEnough(double computedValue, double hardcodeValue) const;
 };

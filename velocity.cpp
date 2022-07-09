@@ -26,6 +26,17 @@ Velocity::Velocity(Velocity initVelocity, Acceleration accel, double time)
 }
 
 /***********************************************************************
+ * VELOCITY ANGLE MAGNITUDE CONSTRUCTOR
+ * A constructor to set this velocity from an angle and magnitude
+ ************************************************************************/
+Velocity::Velocity(Angle angle, double magnitude)
+{
+   // Calculate and set the horizontal and vertical components
+   setX(magnitude * sin(angle.getRadian()));
+   setY(magnitude * cos(angle.getRadian()));
+}
+
+/***********************************************************************
  * GET SPEED
  * A method to get the total magnitude of the velocity.
  ************************************************************************/
@@ -45,13 +56,13 @@ void Velocity::applyAcceleration(Acceleration accel, double time)
    velocityY += accel.getY() * time;
 }
 
-/***********************************************************************
- * ASSIGNMENT OPERATOR
- * A method to overload the assignment operator.
- ************************************************************************/
-const Velocity & Velocity::operator= (Velocity & rhs)
-{
-   velocityX = rhs.getX();
-   velocityY = rhs.getY();
-   return (*this);
-}
+///***********************************************************************
+// * ASSIGNMENT OPERATOR
+// * A method to overload the assignment operator.
+// ************************************************************************/
+//const Velocity& Velocity::operator = (const Velocity& rhs)
+//{
+//   velocityX = rhs.getX();
+//   velocityY = rhs.getY();
+//   return (*this);
+//}

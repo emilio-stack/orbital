@@ -13,6 +13,7 @@
 #include <iostream>
 #include "position.h"
 #include <cassert>
+#include <iostream>
 
 using namespace std;
 
@@ -25,6 +26,7 @@ class TestPosition
 public:
    void run()
    {
+      cout << "Position: ";
       Position().setZoom(1000.0 /* 1km equals 1 pixel */);
       defaultConstructor();
       nonDefaultConstructor();
@@ -36,6 +38,7 @@ public:
       
       addPixels();
       addMeters();
+      cout << "Passed\n";
    }
    
 private:
