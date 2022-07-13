@@ -20,12 +20,22 @@ const double GRAVITY = -9.80665;
  **********************************************************************/
 Satellite :: Satellite()
 {
+   // position defaults to (0.0, 0.0)
    position.setMeters(0.0, 0.0);
+   
+   // calculate the angle at our position
    angle = Angle(position.getMetersX(), position.getMetersY());
-   velocity.setX(0.0);
-   velocity.setY(0.0);
+   
+   // velocity init is (0.0, 0.0)
+   velocity.set(0.0, 0.0);
+
+   // how fast we are spinning in radians per frame
    angularVelocity = 0.0;
+   
+   // not dead yet!
    dead = false;
+   
+   // radius in meters, whatever 0.0 pixels is
    radius = 0.0 * position.getZoom();
 }
 
@@ -35,11 +45,22 @@ Satellite :: Satellite()
  **********************************************************************/
 Satellite :: Satellite(Position pos, Velocity init, double rad)
 {
+   // set the position
    position.setMeters(pos.getMetersX(), pos.getMetersY());
+   
+   // calculate the angle from the position
    angle = Angle(position.getMetersX(), position.getMetersY());
+   
+   // set the init velocity
    velocity = init;
+   
+   // how fast we are spinning
    angularVelocity = ANGULAR_VELOCITY;
+   
+   // not dead yet!
    dead = false;
+   
+   // radius in meters, whatever rad pixels is
    radius = rad * position.getZoom();
 }
 
@@ -49,11 +70,22 @@ Satellite :: Satellite(Position pos, Velocity init, double rad)
  **********************************************************************/
 void Satellite :: update(double time)
 {
+   // the direction of the pull of gravity
    double gravityMagnitude = computeGravity();
+   
+   // next calculate the angle based on our position
    angle = Angle(position.getMetersX(), position.getMetersY());
+   
+   // then calculate the acceleration of gravity
    Acceleration gravity(angle, gravityMagnitude);
+   
+   // apply acceleration of gravity to our velocity over time
    velocity.applyAcceleration(gravity, time);
+   
+   // update our position with our new velocity and acceleration over time
    position.update(velocity, gravity, time);
+   
+   // update our angle from angular velocity
    angle.addRadian(angularVelocity);
 }
 
@@ -71,8 +103,8 @@ void Satellite :: update(double time)
  *************************************************************************/
 double Satellite :: computeGravity() const
 {
-   double h = computeAltitude();
-   return GRAVITY * ((EARTH_RADIUS / (EARTH_RADIUS + h)) * (EARTH_RADIUS / (EARTH_RADIUS + h)));
+   double height = computeAltitude();
+   return GRAVITY * ((EARTH_RADIUS / (EARTH_RADIUS + height)) * (EARTH_RADIUS / (EARTH_RADIUS + height)));
 }
 
 /*************************************************************************
@@ -111,14 +143,28 @@ bool Satellite :: closeEnough(double computedValue, double hardcodeValue) const
  **********************************************************************/
 AtomicSatellite :: AtomicSatellite(const Satellite & parent, Angle shootOff, double rad)
 {
+   // start at parent's position
    position = parent.getPosition();
-   angle = Angle(position.getMetersX(), position.getMetersY());
-   angle.addDegrees(shootOff.getDegrees());
+
+   // the orientation will be random
+   angle = Angle(random(0.0, 360.0));
+
+   // take parent's velocity
    velocity = parent.getVelocity();
-   double magnitude = random(5000, 9000);
+
+   // magnitude of the kick in the direction of the shootoff
+   double magnitude = random(50, 90);
+
+   // adjust the velocity to take that of the kick/shootoff
    velocity += Velocity(angle, magnitude);
+
+   // how fast we are spinning in radians per frame
    angularVelocity = ANGULAR_VELOCITY;
+   
+   // not dead yet!
    dead = false;
+   
+   // radius in meters, whatever rad pixels is
    radius = rad * position.getZoom();
 }
 
@@ -128,11 +174,22 @@ AtomicSatellite :: AtomicSatellite(const Satellite & parent, Angle shootOff, dou
  **********************************************************************/
 GPS :: GPS(Position pos, Velocity init)
 {
+   // start at our specified position
    position.setMeters(pos.getMetersX(), pos.getMetersY());
+   
+   // calculate our angle from our position
    angle = Angle(position.getMetersX(), position.getMetersY());
+   
+   // set our specified initial velocity
    velocity = init;
+   
+   // how fast we are spinning in radians per frame
    angularVelocity = ANGULAR_VELOCITY;
+   
+   // not deaed yet!
    dead = false;
+   
+   // radius in meters, whatever 12 pixels is
    radius = 12.0 * position.getZoom();
 }
 
@@ -141,13 +198,23 @@ GPS :: GPS(Position pos, Velocity init)
  * Upon collision GPS satellites create 2 fragments
  * and 3 parts: GPS CENETR, GPS  LEFT, GPS RIGHT
  **********************************************************************/
-void GPS :: destroy(std::vector<Satellite *> & satellites) const
+void GPS :: destroy(std::list<Satellite *> & satellites) const
 {
-   Satellite * frag1 = new Fragment(*this, Angle(0.0));
-   Satellite * frag2 = new Fragment(*this, Angle(90.0));
+   // create the parts and fragments
+   Satellite * frag1 = new Fragment(*this);
+   Satellite * frag2 = new Fragment(*this);
    Satellite * center = new GPSCenter(*this, Angle(30.0), 7.0);
    Satellite * left = new GPSLeft(*this, Angle(45.0), 8.0);
    Satellite * right = new GPSRight(*this, Angle(270.0), 8.0);
+   
+   // offset the parts and fragments
+   frag1->update(144);
+   frag2->update(144);
+   center->update(144);
+   left->update(144);
+   right->update(144);
+   
+   // add them to the list of satellites
    satellites.push_back(frag1);
    satellites.push_back(frag2);
    satellites.push_back(center);
@@ -160,12 +227,22 @@ void GPS :: destroy(std::vector<Satellite *> & satellites) const
  **********************************************************************/
 Hubble :: Hubble()
 {
+   // default position is (0.0, -42164000.0)
    position.setMeters(0.0, -42164000.0);
+   
+   // calculate angle at that position
    angle = Angle(position.getMetersX(), position.getMetersY());
-   velocity.setX(3100.0);
-   velocity.setY(0.0);
+   
+   // set our initial velocity (3100.0, 0.0)
+   velocity.set(3100.0, 0.0);
+   
+   // how fast we are spinning in radian per frame
    angularVelocity = ANGULAR_VELOCITY;
+   
+   // not dead yet!
    dead = false;
+   
+   // radius in meters, whatever 12 pixels is
    radius = 10.0 * position.getZoom();
 }
 
@@ -175,12 +252,21 @@ Hubble :: Hubble()
  * and 4 parts: HUBBLE TELESCOPE, HUBBLE COMPUTER,
  * HUBBLE  LEFT, HUBBLE RIGHT
  **********************************************************************/
-void Hubble :: destroy(std::vector<Satellite *> & satellites) const
+void Hubble :: destroy(std::list<Satellite *> & satellites) const
 {
+   // Create the parts
    Satellite * tel = new HubbleTelescope(*this, Angle(0.0), 10.0);
    Satellite * comp = new HubbleComputer(*this, Angle(90.0), 7.0);
    Satellite * left = new HubbleLeft(*this, Angle(45.0), 8.0);
    Satellite * right = new HubbleRight(*this, Angle(270.0), 8.0);
+   
+   // offset the parts
+   tel->update(144);
+   comp->update(144);
+   left->update(144);
+   right->update(144);
+   
+   // add them to the list of satellites
    satellites.push_back(tel);
    satellites.push_back(comp);
    satellites.push_back(left);
@@ -192,12 +278,22 @@ void Hubble :: destroy(std::vector<Satellite *> & satellites) const
  **********************************************************************/
 Sputnik :: Sputnik()
 {
+   // default position is (-36515095.13 , 21082000.0)
    position.setMeters(-36515095.13 , 21082000.0);
+   
+   // calculate the angle from our position
    angle = Angle(position.getMetersX(), position.getMetersY());
-   velocity.setX(2050.0);
-   velocity.setY(2684.68);
+   
+   // set the initial velocity
+   velocity.set(2050.0, 2684.68);
+   
+   // how fast we are spinning in radians per frame
    angularVelocity = ANGULAR_VELOCITY;
+   
+   // not dead yet!
    dead = false;
+   
+   // radius in meters, whatever 12 pixels is
    radius = 4.0 * position.getZoom();
 }
 
@@ -205,12 +301,21 @@ Sputnik :: Sputnik()
  * SPUTNIK DESTROY
  * Upon collision SPUTNIK satellites create 4 fragments and 0 parts
  **********************************************************************/
-void Sputnik :: destroy(std::vector<Satellite *> & satellites) const
+void Sputnik :: destroy(std::list<Satellite *> & satellites) const
 {
-   Satellite * frag1 = new Fragment(*this, Angle(0.0));
-   Satellite * frag2 = new Fragment(*this, Angle(90.0));
-   Satellite * frag3 = new Fragment(*this, Angle(180.0));
-   Satellite * frag4 = new Fragment(*this, Angle(270.0));
+   // create the parts and fragments
+   Satellite * frag1 = new Fragment(*this);
+   Satellite * frag2 = new Fragment(*this);
+   Satellite * frag3 = new Fragment(*this);
+   Satellite * frag4 = new Fragment(*this);
+   
+   // offset the parts and fragments
+   frag1->update(144);
+   frag2->update(144);
+   frag3->update(144);
+   frag4->update(144);
+   
+   // add them to the list of satellites
    satellites.push_back(frag1);
    satellites.push_back(frag2);
    satellites.push_back(frag3);
@@ -222,12 +327,23 @@ void Sputnik :: destroy(std::vector<Satellite *> & satellites) const
  **********************************************************************/
 Starlink :: Starlink()
 {
+   // this is the default position of starlink
    position.setMeters(0.0 , -13020000.0);
+   
+   // calculate the angle from the position
    angle = Angle(position.getMetersX(), position.getMetersY());
+   
+   // the initial velocity of of the starlink
    velocity.setX(5800.0);
    velocity.setY(0.0);
+   
+   // how fast we are spinning in radians
    angularVelocity = ANGULAR_VELOCITY;
+   
+   // not dead yet!
    dead = false;
+   
+   // radius whatever 6.0 pixels times zoom is
    radius = 6.0 * position.getZoom();
 }
 
@@ -236,12 +352,21 @@ Starlink :: Starlink()
  * Upon collision STARLINK satellites create 2 fragments
  * and 2 parts: STARLINK BODY, STARLINK ARRAY
  **********************************************************************/
-void Starlink :: destroy(std::vector<Satellite *> & satellites) const
+void Starlink :: destroy(std::list<Satellite *> & satellites) const
 {
-   Satellite * frag1 = new Fragment(*this, Angle(0.0));
-   Satellite * frag2 = new Fragment(*this, Angle(90.0));
+   // create the satellites and parts
+   Satellite * frag1 = new Fragment(*this);
+   Satellite * frag2 = new Fragment(*this);
    Satellite * body = new StarlinkBody(*this, Angle(30.0), 2.0);
    Satellite * arr = new StarlinkArray(*this, Angle(45.0), 4.0);
+   
+   // offset the satellites and parts
+   frag1->update(144);
+   frag2->update(144);
+   body->update(144);
+   arr->update(144);
+   
+   // add them to the list of satellites
    satellites.push_back(frag1);
    satellites.push_back(frag2);
    satellites.push_back(body);
@@ -253,14 +378,26 @@ void Starlink :: destroy(std::vector<Satellite *> & satellites) const
  **********************************************************************/
 Ship :: Ship()
 {
+   // Ship's default position is (-450px, 450px)
    position.setPixelsX(-450.0);
    position.setPixelsY(450.0);
+   
+   // Calculate the angle from the position
    angle = Angle(position.getMetersX(), position.getMetersY());
-   velocity.setX(0.0);
-   velocity.setY(-2000);
+   
+   // initial velocity is (0.0 m/s, -2,000 m/s)
+   velocity.set(0.0, -2000.0);
+
+   // how fast are we spinning. This is radian per frame
    angularVelocity = ANGULAR_VELOCITY;
+   
+   // not dead yet!
    dead = false;
+   
+   // radius in meters, whatever 2 pixels is
    radius = 6.0 * position.getZoom();
+   
+   // ship is not thrusting by default
    thrust = false;
 }
 
@@ -268,11 +405,19 @@ Ship :: Ship()
  * SHIP DESTROY
  * Upon collision SHIP satellites create 3 fragments and 0 parts
  **********************************************************************/
-void Ship :: destroy(std::vector<Satellite *> & satellites) const
+void Ship :: destroy(std::list<Satellite *> & satellites) const
 {
-   Satellite * frag1 = new Fragment(*this, Angle(0.0));
-   Satellite * frag2 = new Fragment(*this, Angle(90.0));
-   Satellite * frag3 = new Fragment(*this, Angle(180.0));
+   // create the fragments
+   Satellite * frag1 = new Fragment(*this);
+   Satellite * frag2 = new Fragment(*this);
+   Satellite * frag3 = new Fragment(*this);
+   
+   // offset the fragments
+   frag1->update(144);
+   frag2->update(144);
+   frag3->update(144);
+   
+   // add them to the list of satellites
    satellites.push_back(frag1);
    satellites.push_back(frag2);
    satellites.push_back(frag3);
@@ -286,7 +431,7 @@ void Ship :: destroy(std::vector<Satellite *> & satellites) const
  *    Right: rotate right by 0.1 radians
  *    Space: shoot projectile
  **********************************************************************/
-void Ship :: input(const Interface* pUI, std::vector<Satellite *> & satellites)
+void Ship :: input(const Interface* pUI, std::list<Satellite *> & satellites)
 {
    // left & right input
    angularVelocity += (pUI->isRight() ? 0.1 : 0.0) + (pUI->isLeft() ? -0.1 : 0.0);
@@ -294,17 +439,27 @@ void Ship :: input(const Interface* pUI, std::vector<Satellite *> & satellites)
    // down input
    if (pUI->isDown())
    {
+      // set thrust to true and apply the additional thrust acceleration
       thrust = true;
-      Acceleration addidtionalAccel (angle, 30.0);
+      Acceleration addidtionalAccel (angle, 3.0);
       velocity.applyAcceleration(addidtionalAccel, TIME_PER_FRAME);
    } else
+      // set thrust back to false
       thrust = false;
 
    // space input
    if (pUI->isSpace())
    {
+      // create the bullet velocity
       Velocity vBullet (angle, 9000.0);
+      
+      // create the bullet
       Satellite * pBullet = new Projectile (*this, vBullet);
+      
+      // offset the bullet
+      pBullet->update(144);
+      
+      // add the bullet to the list of satellites
       satellites.push_back(pBullet);
    }
 }
@@ -314,12 +469,22 @@ void Ship :: input(const Interface* pUI, std::vector<Satellite *> & satellites)
  **********************************************************************/
 Dragon :: Dragon()
 {
+   // Dragon default position starts at (0.0, 8000000.0)
    position.setMeters(0.0, 8000000.0);
+   
+   // Calculate the orientation from the position
    angle = Angle(position.getMetersX(), position.getMetersY());
-   velocity.setX(-7900.0);
-   velocity.setY(0.0);
+   
+   // Dragon initial velocity is (-7,900.0 m/s, 0.0 m/s) by default
+   velocity.set(-7900.0, 0.0);
+   
+   // how fast are we spinning. This is radian per frame
    angularVelocity = ANGULAR_VELOCITY;
+   
+   // not dead yet!
    dead = false;
+   
+   // radius in meters, whatever 2 pixels is
    radius = 7.0 * position.getZoom();
 }
 
@@ -328,13 +493,23 @@ Dragon :: Dragon()
  * Upon collision DRAGON satellites create 2 fragments
  * and 3 parts: DRAGON CENETR, DRAGON  LEFT, DRAGON RIGHT
  **********************************************************************/
-void Dragon :: destroy(std::vector<Satellite *> & satellites) const
+void Dragon :: destroy(std::list<Satellite *> & satellites) const
 {
-   Satellite * frag1 = new Fragment(*this, Angle(0.0));
-   Satellite * frag2 = new Fragment(*this, Angle(90.0));
+   // create the parts and fragments
+   Satellite * frag1 = new Fragment(*this);
+   Satellite * frag2 = new Fragment(*this);
    Satellite * center = new DragonCenter(*this, Angle(30.0), 6.0);
    Satellite * left = new DragonLeft(*this, Angle(45.0), 6.0);
    Satellite * right = new DragonRight(*this, Angle(270.0), 6.0);
+   
+   // offset them
+   frag1->update(144);
+   frag2->update(144);
+   center->update(144);
+   left->update(144);
+   right->update(144);
+   
+   // add them to the list of satellites
    satellites.push_back(frag1);
    satellites.push_back(frag2);
    satellites.push_back(center);
@@ -347,12 +522,21 @@ void Dragon :: destroy(std::vector<Satellite *> & satellites) const
  * Upon collision DRAGON CENTER satellites create 4 fragments
  * and 0 parts.
  **********************************************************************/
-void DragonCenter :: destroy(std::vector<Satellite *> & satellites) const
+void DragonCenter :: destroy(std::list<Satellite *> & satellites) const
 {
-   Satellite * frag1 = new Fragment(*this, Angle(0.0));
-   Satellite * frag2 = new Fragment(*this, Angle(90.0));
-   Satellite * frag3 = new Fragment(*this, Angle(180.0));
-   Satellite * frag4 = new Fragment(*this, Angle(270.0));
+   // create the fragments
+   Satellite * frag1 = new Fragment(*this);
+   Satellite * frag2 = new Fragment(*this);
+   Satellite * frag3 = new Fragment(*this);
+   Satellite * frag4 = new Fragment(*this);
+   
+   // offset the fragments
+   frag1->update(144);
+   frag2->update(144);
+   frag3->update(144);
+   frag4->update(144);
+   
+   // add them to the list of satellites
    satellites.push_back(frag1);
    satellites.push_back(frag2);
    satellites.push_back(frag3);
@@ -364,10 +548,17 @@ void DragonCenter :: destroy(std::vector<Satellite *> & satellites) const
  * Upon collision DRAGON LEFT satellites create 2 fragments
  * and 0 parts.
  **********************************************************************/
-void DragonLeft :: destroy(std::vector<Satellite *> & satellites) const
+void DragonLeft :: destroy(std::list<Satellite *> & satellites) const
 {
-   Satellite * frag1 = new Fragment(*this, Angle(0.0));
-   Satellite * frag2 = new Fragment(*this, Angle(90.0));
+   // create the fragments
+   Satellite * frag1 = new Fragment(*this);
+   Satellite * frag2 = new Fragment(*this);
+   
+   // offset the fragments
+   frag1->update(144);
+   frag2->update(144);
+   
+   //add them to the list of satellites
    satellites.push_back(frag1);
    satellites.push_back(frag2);
 }
@@ -377,10 +568,17 @@ void DragonLeft :: destroy(std::vector<Satellite *> & satellites) const
  * Upon collision DRAGON RIGHT satellites create 2 fragments
  * and 0 parts.
  **********************************************************************/
-void DragonRight :: destroy(std::vector<Satellite *> & satellites) const
+void DragonRight :: destroy(std::list<Satellite *> & satellites) const
 {
-   Satellite * frag1 = new Fragment(*this, Angle(0.0));
-   Satellite * frag2 = new Fragment(*this, Angle(90.0));
+   // create the new fragments
+   Satellite * frag1 = new Fragment(*this);
+   Satellite * frag2 = new Fragment(*this);
+   
+   // offset the fragments
+   frag1->update(144);
+   frag2->update(144);
+   
+   // add them to the list of satellites
    satellites.push_back(frag1);
    satellites.push_back(frag2);
 }
@@ -390,18 +588,36 @@ void DragonRight :: destroy(std::vector<Satellite *> & satellites) const
  * A constructor for an fragment satellite that takes a parent SATELLITE
  * and an ANGLE
  **********************************************************************/
-Fragment :: Fragment(const Satellite & parent, Angle shootOff)
+Fragment :: Fragment(const Satellite & parent)
 {
+   // start at the same location as my parent from which I am generated
    position = parent.getPosition();
-   angle = Angle(position.getMetersX(), position.getMetersY());
-   angle.addDegrees(shootOff.getDegrees());
+   
+   // the orientation of the fragment will be random
+   angle.setDegrees(random(0.0, 360.0));
+   
+   // start with the parents velocity
    velocity = parent.getVelocity();
+   
+   // magnitude of the kick in the direction of shootOff
    double magnitude = random(5000, 9000);
+   
+   // adjust the velocity to take that of the kick/shootooff
    velocity += Velocity(angle, magnitude);
+   
+   // how fast are we spinning. This is 1 radian per frame
    angularVelocity = 1.0;   // much faster than ANGULAR_VELOCITY
+   
+   // not dead yet!
    dead = false;
+   
+   // radius in meters, whatever 2 pixels is
    radius = 2.0 * position.getZoom();
+   
+   // how many frames until we die
    lifeSpan = random(2.0, 3.0);
+   
+   // how long have I been alive
    aliveTime = 0.0;
 }
 
@@ -412,13 +628,27 @@ Fragment :: Fragment(const Satellite & parent, Angle shootOff)
  **********************************************************************/
 Projectile :: Projectile(const Ship & parent, Velocity bullet)
 {
+   // start at the same location as my parent from which I am generated
    position = parent.getPosition();
-   position.addPixelsY(19.0);
+   
+   // the orientation of the projectile will be random
    angle = Angle(position.getMetersX(), position.getMetersY());
-   velocity = bullet;
-   angularVelocity = 0.0;   // projectile does not have an angular velocity
+   
+   // start with the parents velocity + the velocity of the bullet
+   velocity = bullet + parent.getVelocity();
+   
+   // projectile does not have an angular velocity
+   angularVelocity = 0.0;
+   
+   // not dead yet
    dead = false;
+   
+   // radius in meters, whatever 2 pixels is
    radius = 0.5 * position.getZoom();
+   
+   // how many frames until we die
    lifeSpan = 2.0;
+   
+   // how long have I been alive
    aliveTime = 0.0;
 }

@@ -29,8 +29,8 @@ ptUpperRight(ptUpperRight)
    Satellite * gps1 = new GPS (Position(0.0, 26560000.0), Velocity(-3880.0, 0.0));
    Satellite * gps2 = new GPS (Position(23001634.72, 13280000.0), Velocity(-1940.00, 3360.18));
    Satellite * gps3 = new GPS (Position(23001634.72, -13280000.0), Velocity(1940.00, 3360.18));
-   Satellite * gps4 = new GPS (Position(0.0, -26560000.0), Velocity(0.0, -26560000.0));
-   Satellite * gps5 = new GPS (Position(23001634.72, -13280000.0), Velocity(1940.00, -3360.18));
+   Satellite * gps4 = new GPS (Position(0.0, -26560000.0), Velocity(3880.0, 0.0));  
+   Satellite * gps5 = new GPS (Position(-23001634.72, -13280000.0), Velocity(1940.00, -3360.18));
    Satellite * gps6 = new GPS (Position(-23001634.72, 13280000.0), Velocity( -1940.00, -3360.18));
    Satellite * hubble = new Hubble;
    Satellite * dragon = new Dragon;
@@ -58,7 +58,9 @@ void Simulator::input(const Interface* pUI)
 {
    // only the ship handles input
    // ship should be the first element
-   satellites[0]->input(pUI, satellites);
+   list<Satellite *>::iterator it;
+   for (it = satellites.begin(); it != satellites.end(); it++)
+      (*it)->input(pUI, satellites);
 }
 
 /*************************************************************************
@@ -71,37 +73,43 @@ void Simulator::update()
    earth.update();
    
    // update all satellites
-   for (int i = 0; i < satellites.size(); i++)
-   {
-      satellites[i]->update(TIME_PER_FRAME);
-   }
+   for (auto satellite: satellites)
+      satellite->update(TIME_PER_FRAME);
    
    // kill satellites that have collided
-   for (int i = 0; i < satellites.size(); i++)
+   list<Satellite *>::iterator it1;
+   list<Satellite *>::iterator it2;
+   for (it1 = satellites.begin(); it1 != satellites.end(); ++it1)
    {
-      for (int j = i + 1; j < satellites.size(); j++)
+      it2 = it1;
+      for (it2++; it2 != satellites.end(); ++it2)
       {
-         if (!satellites[i]->isDead() and !satellites[j]->isDead())
+         if (!(*it1)->isDead() && !(*it2)->isDead())   // what is isInvisible?
          {
-            double distance = computeDistance(satellites[i]->getPosition(),
-                                              satellites[j]->getPosition());
-            if (distance < satellites[i]->getRadius() + satellites[j]->getRadius())
+            assert(it1 != it2);
+            double distance = computeDistance((*it1)->getPosition(),
+                                              (*it2)->getPosition());
+            double r1 = (*it1)->getRadius();
+            double r2 = (*it2)->getRadius();
+            if (distance < (*it1)->getRadius() + (*it2)->getRadius())
             {
-               satellites[j]->kill();
-               satellites[j]->kill();
+               (*it1)->kill();
+               (*it2)->kill();
             }
          }
       }
    }
    
    // Remove dead satellites
-   for (int i = 0; i < satellites.size(); i++)
+   for (it1 = satellites.begin(); it1 != satellites.end(); )
    {
-      if (satellites[i]->isDead())
+      if ((*it1)->isDead())
       {
-         satellites[i]->destroy(satellites);
-         satellites.erase(satellites.begin() + i);
+         (*it1)->destroy(satellites);
+         it1 = satellites.erase(it1);
       }
+      else
+         ++it1;
    }
 }
 
@@ -119,6 +127,7 @@ void Simulator::draw()
    earth.draw();
 
    // then the satellites
-   for (int i = 0; i < satellites.size(); i++)
-      satellites[i]->draw();
+   list<Satellite *>::iterator it;
+   for (it = satellites.begin(); it != satellites.end(); it++)
+      (*it)->draw();
 }

@@ -38,6 +38,11 @@ public:
    void setY(double value) { velocityY = value;  }
    void addX(double value) { velocityX += value; }
    void addY(double value) { velocityY += value; }
+   void set(double valX, double valY)
+   {
+      velocityX += valX;
+      velocityY += valY;
+   }
    
    // operators
    const Velocity& operator =  (const Velocity& rhs)
@@ -48,6 +53,13 @@ public:
    }
    
    const Velocity& operator += (const Velocity& rhs)
+   {
+      velocityX += rhs.getX();
+      velocityY += rhs.getY();
+      return *this;
+   }
+   
+   const Velocity& operator + (const Velocity& rhs)
    {
       velocityX += rhs.getX();
       velocityY += rhs.getY();

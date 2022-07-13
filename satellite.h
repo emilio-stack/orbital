@@ -21,7 +21,7 @@
 #include "uiDraw.h"        // for DRAW *
 #include "uiInteract.h"    // for INTERFACE
 #include "constants.h"     // for CONSTANTS
-#include <vector>          // for VECTOR
+#include <list>            // for LIST
 
 /**********************************************************************
  * SATELLITE
@@ -53,15 +53,15 @@ public:
    
    // input & output
    virtual void draw() const = 0;
-   virtual void destroy(std::vector<Satellite *> & satellites) const = 0;
-   virtual void input(const Interface* pUI, std::vector<Satellite *> & satellites)
+   virtual void destroy(std::list<Satellite *> & satellites) const = 0;
+   virtual void input(const Interface* pUI, std::list<Satellite *> & satellites)
    { /* all satellites ignore input except for ship */ }
    
 protected:
    Position position;               // the position of the satellite
    Angle angle;                     // the angle of the satellite
    Velocity velocity;               // the velocity of the satellite
-   double angularVelocity;          // the speed of rotation of the satellite
+   double angularVelocity;          // the speed of rotation of the satellite in radian
    bool dead;                       // the dead/alive state of the satellite
    double radius;                   // the radius of the satellite in pixels
    
@@ -81,7 +81,7 @@ public:
    Sputnik();
    
    // Upon collision create parts & fragments if any
-   void destroy(std::vector<Satellite *> & satellites) const;
+   void destroy(std::list<Satellite *> & satellites) const;
    
    void draw() const { drawSputnik(position, angularVelocity); }
 };
@@ -97,7 +97,7 @@ public:
    GPS(Position pos, Velocity init);
    
    // Upon collision create parts & fragments if any
-   void destroy(std::vector<Satellite *> & satellites) const;
+   void destroy(std::list<Satellite *> & satellites) const;
    
    void draw() const { drawGPS(position, angularVelocity); }
 };
@@ -112,7 +112,7 @@ public:
    Hubble();
    
    // Upon collision create parts & fragments if any
-   void destroy(std::vector<Satellite *> & satellites) const;
+   void destroy(std::list<Satellite *> & satellites) const;
    
    void draw() const { drawHubble(position, angularVelocity); }
 };
@@ -127,7 +127,7 @@ public:
    Dragon();
    
    // Upon collision create parts & fragments if any
-   void destroy(std::vector<Satellite *> & satellites) const;
+   void destroy(std::list<Satellite *> & satellites) const;
    
    void draw() const { drawCrewDragon(position, angularVelocity); }
 };
@@ -142,7 +142,7 @@ public:
    Starlink();
    
    // Upon collision create parts & fragments if any
-   void destroy(std::vector<Satellite *> & satellites) const;
+   void destroy(std::list<Satellite *> & satellites) const;
    
    void draw() const { drawStarlink(position, angularVelocity); }
 };
@@ -157,10 +157,10 @@ public:
    Ship();
    
    // Handle input
-   void input(const Interface* pUI, std::vector<Satellite *> & satellites);
+   void input(const Interface* pUI, std::list<Satellite *> & satellites);
    
    // Upon collision create parts & fragments if any
-   void destroy(std::vector<Satellite *> & satellites) const;
+   void destroy(std::list<Satellite *> & satellites) const;
    
    void draw() const { drawShip(position, angle.getRadian(), thrust); }
    
@@ -180,11 +180,11 @@ public:
    friend class TestSatellite;
    
    // constructor
-   using Satellite :: Satellite;   // TODO: how do inheritance constructors work?
+   using Satellite :: Satellite;   
    AtomicSatellite(const Satellite & parent, Angle shootOff, double rad);
    
    // Upon collision create parts & fragments if any
-   virtual void destroy(std::vector<Satellite *> & satellites) const
+   virtual void destroy(std::list<Satellite *> & satellites) const
    { /* Atomics do not break into more satellites */}
 };
 
@@ -222,7 +222,7 @@ class Fragment: public ExpiringSatellite
 {
 public:
    using ExpiringSatellite :: ExpiringSatellite;
-   Fragment(const Satellite & parent, Angle shootOff);
+   Fragment(const Satellite & parent);
    void draw() const { drawFragment(position, angularVelocity); }
 };
 
@@ -339,7 +339,7 @@ public:
    using AtomicSatellite :: AtomicSatellite;
    
    // Upon collision create parts & fragments if any
-   virtual void destroy(std::vector<Satellite *> & satellites) const;
+   virtual void destroy(std::list<Satellite *> & satellites) const;
    
    void draw() const { drawCrewDragonCenter(position, angularVelocity); }
 };
@@ -355,7 +355,7 @@ public:
    using AtomicSatellite :: AtomicSatellite;
    
    // Upon collision create parts & fragments if any
-   virtual void destroy(std::vector<Satellite *> & satellites) const;
+   virtual void destroy(std::list<Satellite *> & satellites) const;
    
    void draw() const { drawCrewDragonRight(position, angularVelocity); }
 };
@@ -371,7 +371,7 @@ public:
    using AtomicSatellite :: AtomicSatellite;
    
    // Upon collision create parts & fragments if any
-   virtual void destroy(std::vector<Satellite *> & satellites) const;
+   virtual void destroy(std::list<Satellite *> & satellites) const;
    
    void draw() const { drawCrewDragonLeft(position, angularVelocity); }
 };

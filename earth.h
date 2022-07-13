@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "Position.h"      // for POSITION
+#include "position.h"      // for POSITION
 #include "constants.h"     // for CONSTANTS
 
 class Earth

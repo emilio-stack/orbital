@@ -7,7 +7,6 @@
  *    Provides a convenient interface to run the orbital simulator
  ************************************************************************/
 /**
- * TODO: Possibly implement a list instead of a vector for better performance
  * TODO: Debug collisions
  */
 #pragma once
@@ -19,7 +18,7 @@
 #include "star.h"       // for STAR
 #include "satellite.h"  // for SATELLITE *
 #include "constants.h"  // for CONSTANTS *
-#include <vector>       // for VECTOR
+#include <list>         // for LIST
 
 using namespace std;
 
@@ -39,7 +38,7 @@ public:
    
 private:
    Earth earth;                     // the earth
-   vector<Satellite *> satellites;  // collection of satellites in orbit
+   list<Satellite *> satellites;    // collection of satellites in orbit
    Position ptUpperRight;           // size of the screen
    Star stars[NUM_STARS];           // the star array
 };
