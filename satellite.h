@@ -8,11 +8,6 @@
  *    class is to get the orbit working in the simulator
  ************************************************************************/
 
-/**
- * TODO: Make earth collideable
- * TODO: implement expiration
- */
-
 #pragma once
 
 #include "position.h"      // for POSITION
@@ -34,10 +29,14 @@ public:
    // test class is a friend for private access
    friend class TestSatellite;
    
-   // constructor
+   // constructors
    Satellite();
+   
+   // the satellite position constructor
    Satellite(Position pos, Velocity init, double radius = 0.0);
-   Satellite(const Satellite & parent, Angle shootoff, double rad);     // the satellite parent constructor
+   
+   // the satellite parent constructor
+   Satellite(const Satellite & parent, Angle shootoff, double rad);
    
    // accessors
    Position getPosition()  const { return position;   }

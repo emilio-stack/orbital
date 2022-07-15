@@ -7,7 +7,6 @@
 // *    This file provides resilient robustness to the satellite class
 // ************************************************************************/
 //
-//// TODO: ISOLATE ALL test cases by using polymorphism in the member variables
 //
 //#pragma once
 //

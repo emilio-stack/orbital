@@ -17,11 +17,14 @@ class Earth
 {
 public:
    // constructors
-   Earth(): position(0.0, 0.0), angle(0.0) {}
+   Earth(): position(0.0, 0.0), angle(0.0), radius(EARTH_RADIUS) {}
    
    // getters
    double getAngle() { return angle; }
    Position getPosition() { return position; }
+   double getRadius() {return radius; }
+   
+   // render
    void draw() const { drawEarth(position, angle); }
    
    // modifers
@@ -30,4 +33,5 @@ public:
 private:
    Position position; // the position of the earth
    double angle;      // the angle of the earth in radians
+   double radius;     // the radius of the earth in meters
 };

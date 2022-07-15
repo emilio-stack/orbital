@@ -6,9 +6,7 @@
  * Summary:
  *    Provides a convenient interface to run the orbital simulator
  ************************************************************************/
-/**
- * TODO: Debug collisions
- */
+
 #pragma once
 
 #include "uiInteract.h" // for INTERFACE

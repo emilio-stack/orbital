@@ -84,29 +84,44 @@ void Simulator::update()
       it2 = it1;
       for (it2++; it2 != satellites.end(); ++it2)
       {
+         // only check for collisions if not dead and not expired
          if (!(*it1)->isDead() && !(*it2)->isDead() &&
-             !(*it1)->hasExpired() && !(*it2)->hasExpired())   // what is isInvisible?
+             !(*it1)->hasExpired() && !(*it2)->hasExpired())
          {
+            
+            // better not be checking myself
             assert(it1 != it2);
-            double distance = computeDistance((*it1)->getPosition(),
-                                              (*it2)->getPosition());
+            
+            // check for collision with other satellites
+            double distance = computeDistance((*it1)->getPosition(),(*it2)->getPosition());
             if (distance < (*it1)->getRadius() + (*it2)->getRadius())
             {
                (*it1)->kill();
                (*it2)->kill();
             }
+            
+            // check for collision with earth for itr1
+            distance = computeDistance((*it1)->getPosition(), earth.getPosition());
+            if (distance < earth.getRadius())
+               (*it1)->kill();
+            
+            // check for collision with earth for itr2
+            distance = computeDistance((*it1)->getPosition(), earth.getPosition());
+            if (distance < earth.getRadius())
+               (*it2)->kill();
          }
       }
    }
    
-   // Remove dead satellites
    for (it1 = satellites.begin(); it1 != satellites.end(); )
    {
+      // Remove dead satellites
       if ((*it1)->isDead())
       {
          (*it1)->destroy(satellites);
          it1 = satellites.erase(it1);
       }
+      // Remove expired satellites
       else if ((*it1)->hasExpired())
          it1 = satellites.erase(it1);
       else

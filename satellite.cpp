@@ -9,11 +9,8 @@
  ************************************************************************/
 
 #include <cmath>           // for SQRT function
-#include "satellite.h"     // for SATELLITE 
-
-const double ANGULAR_VELOCITY = 0.2;
-const double EARTH_RADIUS = 6378000.0;
-const double GRAVITY = -9.80665;
+#include "satellite.h"     // for SATELLITE
+#include "constants.h"     // for EARTH_RADIUS, ANGULAR_VELOCITY, GRAVITY
 
 /**********************************************************************
  * SATELLITE DEFAULT CONSTRUCTOR

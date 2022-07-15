@@ -13,14 +13,6 @@
  *      ~16 hours
  *****************************************************************/
 
-/**
- * TODO: Make earth collideable
- * TODO: Implement expiration
- * TODO: Make sure all parts are created
- * TODO: Make sure collisions are working correctly
- * TODO: offset is 0 when there it is not attached to a parent but the parent sets the offset when it is attached and called in the parent draw.
- */
-
 #include "test.h"       // for TEST RUNNER
 #include "simulator.h"  // for SIMULATOR
 using namespace std;
