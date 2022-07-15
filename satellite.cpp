@@ -65,6 +65,38 @@ Satellite :: Satellite(Position pos, Velocity init, double rad)
 }
 
 /**********************************************************************
+ * SATELLITE  PARENT CONSTRUCTOR
+ * A constructor for a satellite that takes a parent SATELLITE
+ * and an ANGLE and a radius
+ **********************************************************************/
+Satellite :: Satellite(const Satellite & parent, Angle shootoff, double rad)
+{
+   // start at parent's position
+   position = parent.getPosition();
+
+   // the orientation will be at the specified shoot off angle
+   angle = shootoff;
+
+   // take parent's velocity
+   velocity = parent.getVelocity();
+
+   // magnitude of the kick in the direction of the shootoff
+   double magnitude = random(5000, 9000);
+
+   // adjust the velocity to take that of the kick/shootoff
+   velocity += Velocity(angle, magnitude);
+
+   // how fast we are spinning in radians per frame
+   angularVelocity = ANGULAR_VELOCITY;
+   
+   // not dead yet!
+   dead = false;
+   
+   // radius in meters, whatever rad pixels is
+   radius = rad * position.getZoom();
+}
+
+/**********************************************************************
  * UPDATE
  * updates a satellite for a specified unit of time
  **********************************************************************/
@@ -134,39 +166,6 @@ double Satellite :: computeAltitude() const
 bool Satellite :: closeEnough(double computedValue, double hardcodeValue) const
 {
    return abs(computedValue - hardcodeValue) < 0.0005;
-}
-
-/**********************************************************************
- * ATOMIC SATELLITE  CONSTRUCTOR
- * A constructor for an atomic satellite that takes a parent SATELLITE
- * and an ANGLE
- **********************************************************************/
-AtomicSatellite :: AtomicSatellite(const Satellite & parent, Angle shootoff, double rad)
-{
-   // start at parent's position
-   position = parent.getPosition();
-
-   // the orientation will be random
-//   angle = Angle(random(0.0, 360.0));
-   angle = shootoff;
-
-   // take parent's velocity
-   velocity = parent.getVelocity();
-
-   // magnitude of the kick in the direction of the shootoff
-   double magnitude = random(5000, 9000);
-
-   // adjust the velocity to take that of the kick/shootoff
-   velocity += Velocity(angle, magnitude);
-
-   // how fast we are spinning in radians per frame
-   angularVelocity = ANGULAR_VELOCITY;
-   
-   // not dead yet!
-   dead = false;
-   
-   // radius in meters, whatever rad pixels is
-   radius = rad * position.getZoom();
 }
 
 /**********************************************************************
@@ -757,7 +756,7 @@ void DragonLeft :: destroy(std::list<Satellite *> & satellites) const
    frag1->update(384);
    frag2->update(384);
    
-   //add them to the list of satellites
+   // add them to the list of satellites
    satellites.push_back(frag1);
    satellites.push_back(frag2);
 }
@@ -792,8 +791,7 @@ Fragment :: Fragment(const Satellite & parent, Angle shootoff)
    // start at the same location as my parent from which I am generated
    position = parent.getPosition();
    
-   // the orientation of the fragment will be random
-//   angle.setDegrees(random(0.0, 360.0));
+   // the orientation will be at the specified shoot off angle
    angle = shootoff;
    
    // start with the parents velocity

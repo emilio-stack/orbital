@@ -9,13 +9,8 @@
  ************************************************************************/
 
 /**
- * TODO: Parts are not atomic, they break up into other fragments.
- * TODO: Get rid of atomic satellite, make parts inherit from satellite
- * TODO: and each implement the destroy method. Revisit atomic satellite?
- * TODO: maybe make expiring the new atomic because the only atomics would then be
- * TODO: projectile and fragment, and they both expire so combine atomic and expiring.
- * TODO: now we need to find the balance between updating 3000 or so seconds,
- * TODO: and kick of correct magnitude.
+ * TODO: Make earth collideable
+ * TODO: implement expiration
  */
 
 #pragma once
@@ -42,6 +37,7 @@ public:
    // constructor
    Satellite();
    Satellite(Position pos, Velocity init, double radius = 0.0);
+   Satellite(const Satellite & parent, Angle shootoff, double rad);     // the satellite parent constructor
    
    // accessors
    Position getPosition()  const { return position;   }
@@ -53,8 +49,8 @@ public:
    // mutators
    void kill() { dead =  true; }
    virtual void update(double time);
-   virtual bool hasExpired() const { return  false; }
-   virtual void age(double amountSeconds) { /* Only expiring satellites age */}
+   virtual bool hasExpired() const { return  false; /* Only atomic satellites expire */}
+   virtual void age(double amountSeconds) { /* Only atomic satellites age */}
    
    // input & output
    virtual void draw() const = 0;
@@ -83,11 +79,13 @@ private:
 class Sputnik: public Satellite
 {
 public:
+   // Constructor
    Sputnik();
    
-   // Upon collision create parts & fragments if any
+   // Must reimplement for sputnik specific destroy
    void destroy(std::list<Satellite *> & satellites) const;
    
+   // Must reimplement for sputnik specific draw
    void draw() const { drawSputnik(position, angularVelocity); }
 };
 
@@ -98,13 +96,65 @@ public:
 class GPS: public Satellite
 {
 public:
-   using Satellite :: Satellite;
+   // Constructor
    GPS(Position pos, Velocity init);
    
-   // Upon collision create parts & fragments if any
+   // Must reimplement for GPS specific destroy
    void destroy(std::list<Satellite *> & satellites) const;
    
+   // Must reimplement for GPS specific
    void draw() const { drawGPS(position, angularVelocity); }
+};
+
+/**********************************************************************
+ * GPS CENTER
+ * A part in the orbital simulator created when a GPS is destroyed.
+ * Inherits from SATELLITE
+ **********************************************************************/
+class GPSCenter: public Satellite
+{
+public:
+   using Satellite :: Satellite;  // for use of satellite parent constructor
+   
+   // Must reimplement for GPS Center specific destroy
+   void destroy(std::list<Satellite *> & satellites) const;
+   
+   // Must reimplement for GPS Center specific draw
+   void draw() const { drawGPSCenter(position, angularVelocity); }
+};
+
+/**********************************************************************
+ * GPS RIGHT
+ * A part in the orbital simulator created when a GPS is destroyed.
+ * Inherits from SATELLITE
+ **********************************************************************/
+class GPSRight: public Satellite
+{
+public:
+   using Satellite :: Satellite;    // for use of satellite parent constructor
+   
+   // Must reimplement for GPS Right specific destroy
+   void destroy(std::list<Satellite *> & satellites) const;
+   
+   // Must reimplement for GPS Right specific draw
+   void draw() const { drawGPSRight(position, angularVelocity, Position()); }
+};
+
+/**********************************************************************
+ * GPS LEFT
+ * A part in the orbital simulator created when a GPS is destroyed.
+ * Inherits from SATELLITE
+ **********************************************************************/
+class GPSLeft: public Satellite
+{
+public:
+   using Satellite :: Satellite;    // for use of satellite parent constructor
+   
+   // Must reimplement for GPS Left specific destroy
+   void destroy(std::list<Satellite *> & satellites) const;
+   
+   // Must reimplement for GPS Left specific draw
+   void draw() const { drawGPSRight(position, angularVelocity, Position()); }
 };
 
 /**********************************************************************
@@ -114,12 +164,82 @@ public:
 class Hubble: public Satellite
 {
 public:
+   // Constructor
    Hubble();
    
-   // Upon collision create parts & fragments if any
+   // Must reimplement for hubble specific destroy
    void destroy(std::list<Satellite *> & satellites) const;
    
+   // Must reimplement for hubble specific draw
    void draw() const { drawHubble(position, angularVelocity); }
+};
+
+/**********************************************************************
+ * HUBBLE TELESCOPE
+ * A part in the orbital simulator created when HUBBLE  is destroyed.
+ * Inherits from SATELLITE
+ **********************************************************************/
+class HubbleTelescope: public Satellite
+{
+public:
+   using Satellite :: Satellite;    // for use of satellite parent constructor
+   
+   // Must reimplement for hubble telescope specific destroy
+   void destroy(std::list<Satellite *> & satellites) const;
+   
+   // Must reimplement for hubble telescope specific draw
+   void draw() const { drawHubbleTelescope(position, angularVelocity); }
+};
+
+/**********************************************************************
+ * HUBBLE COMPUTER
+ * A part in the orbital simulator created when HUBBLE  is destroyed.
+ * Inherits from SATELLITE
+ **********************************************************************/
+class HubbleComputer: public Satellite
+{
+public:
+   using Satellite :: Satellite;    // for use of satellite parent constructor
+   
+   // Must reimplement for hubble computer specific destroy
+   virtual void destroy(std::list<Satellite *> & satellites) const;
+   
+   // Must reimplement for hubble computer specific draw
+   void draw() const { drawHubbleComputer(position, angularVelocity); }
+};
+
+/**********************************************************************
+ * HUBBLE LEFT
+ * A part in the orbital simulator created when HUBBLE  is destroyed.
+ * Inherits from SATELLITE
+ **********************************************************************/
+class HubbleLeft: public Satellite
+{
+public:
+   using Satellite :: Satellite;    // for use of satellite parent constructor
+   
+   // Must reimplement for hubble left specific destroy
+   virtual void destroy(std::list<Satellite *> & satellites) const;
+   
+   // Must reimplement for hubble left specific draw
+   void draw() const { drawHubbleLeft(position, angularVelocity); }
+};
+
+/**********************************************************************
+ * HUBBLE RIGHT
+ * A part in the orbital simulator created when HUBBLE  is destroyed.
+ * Inherits from SATELLITE
+ **********************************************************************/
+class HubbleRight: public Satellite
+{
+public:
+   using Satellite :: Satellite;    // for use of satellite parent constructor
+   
+   // Must reimplement for hubble right specific destroy
+   virtual void destroy(std::list<Satellite *> & satellites) const;
+   
+   // Must reimplement for hubble right specific draw
+   void draw() const { drawHubbleRight(position, angularVelocity); }
 };
 
 /**********************************************************************
@@ -129,12 +249,65 @@ public:
 class Dragon: public Satellite
 {
 public:
+   // Constructor
    Dragon();
    
-   // Upon collision create parts & fragments if any
+   // Must reimplement for dragon specific destroy
    void destroy(std::list<Satellite *> & satellites) const;
    
+   // Must reimplement for dragon specific draw
    void draw() const { drawCrewDragon(position, angularVelocity); }
+};
+
+/**********************************************************************
+ * DRAGON CENTER
+ * A part in the orbital simulator created when DRAGON  is destroyed.
+ * Inherits from SATELLITE
+ **********************************************************************/
+class DragonCenter: public Satellite
+{
+public:
+   using Satellite :: Satellite;    // for use of satellite parent constructor
+   
+   // Must reimplement for dragon center specific destroy
+   virtual void destroy(std::list<Satellite *> & satellites) const;
+   
+   // Must reimplement for dragon center specific draw
+   void draw() const { drawCrewDragonCenter(position, angularVelocity); }
+};
+
+/**********************************************************************
+ * DRAGON RIGHT
+ * A part in the orbital simulator created when DRAGON  is destroyed.
+ * Inherits from SATELLITE
+ **********************************************************************/
+class DragonRight: public Satellite
+{
+public:
+   using Satellite :: Satellite;    // for use of satellite parent constructor
+   
+   // Must reimplement for dragon right specific destroy
+   virtual void destroy(std::list<Satellite *> & satellites) const;
+   
+   // Must reimplement for dragon right specific draw
+   void draw() const { drawCrewDragonRight(position, angularVelocity); }
+};
+
+/**********************************************************************
+ * DRAGON LEFT
+ * A part in the orbital simulator created when DRAGON  is destroyed.
+ * Inherits from SATELLITE
+ **********************************************************************/
+class DragonLeft: public Satellite
+{
+public:
+   using Satellite :: Satellite;    // for use of satellite parent constructor
+   
+   // Must reimplement for dragon left specific destroy
+   virtual void destroy(std::list<Satellite *> & satellites) const;
+   
+   // Must reimplement for dragon left specific draw
+   void draw() const { drawCrewDragonLeft(position, angularVelocity); }
 };
 
 /**********************************************************************
@@ -144,12 +317,48 @@ public:
 class Starlink: public Satellite
 {
 public:
+   // Constructor
    Starlink();
    
-   // Upon collision create parts & fragments if any
+   // Must reimplement for starlink specific destroy
    void destroy(std::list<Satellite *> & satellites) const;
    
+   // Must reimplement for starlink specific draw
    void draw() const { drawStarlink(position, angularVelocity); }
+};
+
+/**********************************************************************
+ * STARLINK BODY
+ * A part in the orbital simulator created when STARLINK is destroyed.
+ * Inherits from SATELLITE
+ **********************************************************************/
+class StarlinkBody: public Satellite
+{
+public:
+   using Satellite :: Satellite;    // for use of satellite parent constructor
+   
+   // Must reimplement for starlink body specific destroy
+   void destroy(std::list<Satellite *> & satellites) const;
+   
+   // Must reimplement for starlink body specific draw
+   void draw() const { drawStarlinkBody(position, angularVelocity); }
+};
+
+/**********************************************************************
+ * STARLINK ARRAY
+ * A part in the orbital simulator created when STARLINK is destroyed.
+ * Inherits from SATELLITE
+ **********************************************************************/
+class StarlinkArray: public Satellite
+{
+public:
+   using Satellite :: Satellite;    // for use of satellite parent constructor
+   
+   // Must reimplement for starlink array specific destroy
+   void destroy(std::list<Satellite *> & satellites) const;
+   
+   // Must reimplement for starlink array specific draw
+   void draw() const { drawStarlinkArray(position, angularVelocity); }
 };
 
 /**********************************************************************
@@ -159,14 +368,16 @@ public:
 class Ship: public Satellite
 {
 public:
+   // Constructor
    Ship();
    
-   // Handle input
+   // Must reimplement for ship specific input
    void input(const Interface* pUI, std::list<Satellite *> & satellites);
    
-   // Upon collision create parts & fragments if any
+   // Must reimplement for ship specific destroy
    void destroy(std::list<Satellite *> & satellites) const;
    
+   // Must reimplement for ship specific draw
    void draw() const { drawShip(position, angle.getRadian(), thrust); }
    
 private:
@@ -176,40 +387,24 @@ private:
 /**********************************************************************
  * ATOMIC SATELLITE
  * An abstract base class for satellites that do not break into
- * more satellites. Inherits from Satellite
+ * more satellites and expire. Inherits from Satellite
  **********************************************************************/
 class AtomicSatellite : public Satellite
 {
 public:
-   // test class is a friend for private access
-   friend class TestSatellite;
    
    // constructor
-   using Satellite :: Satellite;   
-   AtomicSatellite(const Satellite & parent, Angle shootoff, double rad);
+   using Satellite :: Satellite;
    
-   // Upon collision create parts & fragments if any
+   // Must reimplement for atomic satellite specific destroy
    virtual void destroy(std::list<Satellite *> & satellites) const
    { /* Atomics do not break into more satellites */}
-};
-
-/**********************************************************************
- * EXPIRING SATELLITE
- * An abstract base class for satellites that do not break into
- * more satellites. Inherits from Atomic Satellite
- **********************************************************************/
-class ExpiringSatellite : public AtomicSatellite
-{
-public:
-   // test class is a friend for private access
-   friend class TestSatellite;
    
-   // constructor
-   using AtomicSatellite :: AtomicSatellite;
-   
+   // Must reimplement for atomic specific expire
    // check if the satellite has expired
    bool hasExpired() const { return  aliveTime >= lifeSpan; }
    
+   // Must reimplement for atomic specific age
    // add seconds to the age of a satellite
    void age(double amountSeconds) { aliveTime += amountSeconds; }
    
@@ -221,13 +416,15 @@ protected:
 
 /**********************************************************************
  * FRAGMENT
- * A fragment in the orbital simulator. Inherits from Expiring Satellite
+ * A fragment in the orbital simulator. Inherits from Atomic Satellite
  **********************************************************************/
-class Fragment: public ExpiringSatellite
+class Fragment: public AtomicSatellite
 {
 public:
-   using ExpiringSatellite :: ExpiringSatellite;
+   // Constructor
    Fragment(const Satellite & parent, Angle shootOff);
+   
+   // Must reimplement for fragment specific draw
    void draw() const { drawFragment(position, angularVelocity); }
 };
 
@@ -235,175 +432,12 @@ public:
  * PROJECTILLE
  * A projectille in the orbital simulator. Inherits from Expiring Satellite
  **********************************************************************/
-class Projectile: public ExpiringSatellite
+class Projectile: public AtomicSatellite
 {
 public:
-   using ExpiringSatellite :: ExpiringSatellite;
+   // Constructor
    Projectile(const Ship & parent, Velocity bullet);
+   
+   // Must reimplement for projectile specific draw
    void draw() const { drawProjectile(position); }
-};
-
-/**********************************************************************
- * GPS CENTER
- * A part in the orbital simulator created when a GPS is destroyed.
- * Inherits from ATOMIC SATELLITE
- **********************************************************************/
-class GPSCenter: public AtomicSatellite
-{
-public:
-   using AtomicSatellite :: AtomicSatellite;
-   void destroy(std::list<Satellite *> & satellites) const;
-   void draw() const { drawGPSCenter(position, angularVelocity); }
-};
-
-/**********************************************************************
- * GPS RIGHT
- * A part in the orbital simulator created when a GPS is destroyed.
- * Inherits from ATOMIC SATELLITE
- **********************************************************************/
-class GPSRight: public AtomicSatellite
-{
-public:
-   using AtomicSatellite :: AtomicSatellite;
-   void destroy(std::list<Satellite *> & satellites) const;
-   void draw() const { drawGPSRight(position, angularVelocity, Position()); }
-};
-
-/**********************************************************************
- * GPS LEFT
- * A part in the orbital simulator created when a GPS is destroyed.
- * Inherits from ATOMIC SATELLITE
- **********************************************************************/
-class GPSLeft: public AtomicSatellite
-{
-public:
-   using AtomicSatellite :: AtomicSatellite;
-   void destroy(std::list<Satellite *> & satellites) const;
-   void draw() const { drawGPSRight(position, angularVelocity, Position()); }
-};
-
-/**********************************************************************
- * HUBBLE TELESCOPE
- * A part in the orbital simulator created when HUBBLE  is destroyed.
- * Inherits from ATOMIC SATELLITE
- **********************************************************************/
-class HubbleTelescope: public AtomicSatellite
-{
-public:
-   using AtomicSatellite :: AtomicSatellite;
-   void destroy(std::list<Satellite *> & satellites) const;
-   void draw() const { drawHubbleTelescope(position, angularVelocity); }
-};
-
-/**********************************************************************
- * HUBBLE COMPUTER
- * A part in the orbital simulator created when HUBBLE  is destroyed.
- * Inherits from ATOMIC SATELLITE
- **********************************************************************/
-class HubbleComputer: public AtomicSatellite
-{
-public:
-   using AtomicSatellite :: AtomicSatellite;
-   virtual void destroy(std::list<Satellite *> & satellites) const;
-   void draw() const { drawHubbleComputer(position, angularVelocity); }
-};
-
-/**********************************************************************
- * HUBBLE LEFT
- * A part in the orbital simulator created when HUBBLE  is destroyed.
- * Inherits from ATOMIC SATELLITE
- **********************************************************************/
-class HubbleLeft: public AtomicSatellite
-{
-public:
-   using AtomicSatellite :: AtomicSatellite;
-   virtual void destroy(std::list<Satellite *> & satellites) const;
-   void draw() const { drawHubbleLeft(position, angularVelocity); }
-};
-
-/**********************************************************************
- * HUBBLE RIGHT
- * A part in the orbital simulator created when HUBBLE  is destroyed.
- * Inherits from ATOMIC SATELLITE
- **********************************************************************/
-class HubbleRight: public AtomicSatellite
-{
-public:
-   using AtomicSatellite :: AtomicSatellite;
-   virtual void destroy(std::list<Satellite *> & satellites) const;
-   void draw() const { drawHubbleRight(position, angularVelocity); }
-};
-
-/**********************************************************************
- * DRAGON CENTER
- * A part in the orbital simulator created when DRAGON  is destroyed.
- * Inherits from ATOMIC SATELLITE
- **********************************************************************/
-class DragonCenter: public AtomicSatellite
-{
-public:
-   using AtomicSatellite :: AtomicSatellite;
-   
-   // Upon collision create parts & fragments if any
-   virtual void destroy(std::list<Satellite *> & satellites) const;
-   
-   void draw() const { drawCrewDragonCenter(position, angularVelocity); }
-};
-
-/**********************************************************************
- * DRAGON RIGHT
- * A part in the orbital simulator created when DRAGON  is destroyed.
- * Inherits from ATOMIC SATELLITE
- **********************************************************************/
-class DragonRight: public AtomicSatellite
-{
-public:
-   using AtomicSatellite :: AtomicSatellite;
-   
-   // Upon collision create parts & fragments if any
-   virtual void destroy(std::list<Satellite *> & satellites) const;
-   
-   void draw() const { drawCrewDragonRight(position, angularVelocity); }
-};
-
-/**********************************************************************
- * DRAGON LEFT
- * A part in the orbital simulator created when DRAGON  is destroyed.
- * Inherits from ATOMIC SATELLITE
- **********************************************************************/
-class DragonLeft: public AtomicSatellite
-{
-public:
-   using AtomicSatellite :: AtomicSatellite;
-   
-   // Upon collision create parts & fragments if any
-   virtual void destroy(std::list<Satellite *> & satellites) const;
-   
-   void draw() const { drawCrewDragonLeft(position, angularVelocity); }
-};
-
-/**********************************************************************
- * STARLINK BODY
- * A part in the orbital simulator created when STARLINK is destroyed.
- * Inherits from ATOMIC SATELLITE
- **********************************************************************/
-class StarlinkBody: public AtomicSatellite
-{
-public:
-   using AtomicSatellite :: AtomicSatellite;
-   void destroy(std::list<Satellite *> & satellites) const;
-   void draw() const { drawStarlinkBody(position, angularVelocity); }
-};
-
-/**********************************************************************
- * STARLINK ARRAY
- * A part in the orbital simulator created when STARLINK is destroyed.
- * Inherits from ATOMIC SATELLITE
- **********************************************************************/
-class StarlinkArray: public AtomicSatellite
-{
-public:
-   using AtomicSatellite :: AtomicSatellite;
-   void destroy(std::list<Satellite *> & satellites) const;
-   void draw() const { drawStarlinkArray(position, angularVelocity); }
 };
