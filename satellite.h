@@ -409,8 +409,8 @@ public:
    void age(double amountSeconds) { aliveTime += amountSeconds; }
    
 protected:
-   double lifeSpan;        // the life span of the satellite in seconds
-   double aliveTime;       // the age of the satellite in seconds
+   double lifeSpan;        // the life span of the satellite in frames
+   double aliveTime;       // the age of the satellite in frames
 };
 
 

@@ -119,6 +119,9 @@ void Satellite :: update(double time)
    
    // update our angle from angular velocity
    angle.addRadian(angularVelocity);
+   
+   // age our satellite by one frame
+   age(1.0);
 }
 
 /*************************************************************************
@@ -813,7 +816,7 @@ Fragment :: Fragment(const Satellite & parent, Angle shootoff)
    radius = 2.0 * position.getZoom();
    
    // how many frames until we die
-   lifeSpan = random(2.0, 3.0);
+   lifeSpan = random(70, 100);
    
    // how long have I been alive
    aliveTime = 0.0;
@@ -845,7 +848,7 @@ Projectile :: Projectile(const Ship & parent, Velocity bullet)
    radius = 0.5 * position.getZoom();
    
    // how many frames until we die
-   lifeSpan = 2.0;
+   lifeSpan = 70;
    
    // how long have I been alive
    aliveTime = 0.0;

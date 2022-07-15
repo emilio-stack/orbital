@@ -84,13 +84,12 @@ void Simulator::update()
       it2 = it1;
       for (it2++; it2 != satellites.end(); ++it2)
       {
-         if (!(*it1)->isDead() && !(*it2)->isDead())   // what is isInvisible?
+         if (!(*it1)->isDead() && !(*it2)->isDead() &&
+             !(*it1)->hasExpired() && !(*it2)->hasExpired())   // what is isInvisible?
          {
             assert(it1 != it2);
             double distance = computeDistance((*it1)->getPosition(),
                                               (*it2)->getPosition());
-            double r1 = (*it1)->getRadius();
-            double r2 = (*it2)->getRadius();
             if (distance < (*it1)->getRadius() + (*it2)->getRadius())
             {
                (*it1)->kill();
@@ -108,6 +107,8 @@ void Simulator::update()
          (*it1)->destroy(satellites);
          it1 = satellites.erase(it1);
       }
+      else if ((*it1)->hasExpired())
+         it1 = satellites.erase(it1);
       else
          ++it1;
    }
