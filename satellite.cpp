@@ -141,19 +141,20 @@ bool Satellite :: closeEnough(double computedValue, double hardcodeValue) const
  * A constructor for an atomic satellite that takes a parent SATELLITE
  * and an ANGLE
  **********************************************************************/
-AtomicSatellite :: AtomicSatellite(const Satellite & parent, Angle shootOff, double rad)
+AtomicSatellite :: AtomicSatellite(const Satellite & parent, Angle shootoff, double rad)
 {
    // start at parent's position
    position = parent.getPosition();
 
    // the orientation will be random
-   angle = Angle(random(0.0, 360.0));
+//   angle = Angle(random(0.0, 360.0));
+   angle = shootoff;
 
    // take parent's velocity
    velocity = parent.getVelocity();
 
    // magnitude of the kick in the direction of the shootoff
-   double magnitude = random(50, 90);
+   double magnitude = random(5000, 9000);
 
    // adjust the velocity to take that of the kick/shootoff
    velocity += Velocity(angle, magnitude);
@@ -201,18 +202,18 @@ GPS :: GPS(Position pos, Velocity init)
 void GPS :: destroy(std::list<Satellite *> & satellites) const
 {
    // create the parts and fragments
-   Satellite * frag1 = new Fragment(*this);
-   Satellite * frag2 = new Fragment(*this);
-   Satellite * center = new GPSCenter(*this, Angle(30.0), 7.0);
-   Satellite * left = new GPSLeft(*this, Angle(45.0), 8.0);
-   Satellite * right = new GPSRight(*this, Angle(270.0), 8.0);
+   Satellite * frag1 = new Fragment(*this, Angle(45));
+   Satellite * frag2 = new Fragment(*this, Angle(315));
+   Satellite * center = new GPSCenter(*this, Angle(0), 7.0 /* the radius in pixels */);
+   Satellite * left =  new GPSLeft (*this, Angle(230), 8.0 /* the radius in pixels */);
+   Satellite * right = new GPSRight(*this, Angle(135), 8.0 /* the radius in pixels */);
    
    // offset the parts and fragments
-   frag1->update(144);
-   frag2->update(144);
-   center->update(144);
-   left->update(144);
-   right->update(144);
+   frag1->update(384);
+   frag2->update(384);
+   center->update(384);
+   left->update(384);
+   right->update(384);
    
    // add them to the list of satellites
    satellites.push_back(frag1);
@@ -220,6 +221,75 @@ void GPS :: destroy(std::list<Satellite *> & satellites) const
    satellites.push_back(center);
    satellites.push_back(left);
    satellites.push_back(right);
+}
+
+/**********************************************************************
+ * GPS CENTER DESTROY
+ * Upon collision GPS CENTER satellites create 3 fragments
+ * and 0 parts
+ **********************************************************************/
+void GPSCenter :: destroy(std::list<Satellite *> & satellites) const
+{
+   // create the parts and fragments
+   Satellite * frag1 = new Fragment(*this, Angle(0));
+   Satellite * frag2 = new Fragment(*this, Angle(130));
+   Satellite * frag3 = new Fragment(*this, Angle(230));
+   
+   // offset the parts and fragments
+   frag1->update(384);
+   frag2->update(384);
+   frag3->update(384);
+   
+   // add them to the list of satellites
+   satellites.push_back(frag1);
+   satellites.push_back(frag2);
+   satellites.push_back(frag3);
+}
+
+/**********************************************************************
+ * GPS LEFT DESTROY
+ * Upon collision GPS LEFT satellites create 3 fragments
+ * and 0 parts
+ **********************************************************************/
+void GPSLeft :: destroy(std::list<Satellite *> & satellites) const
+{
+   // create the parts and fragments
+   Satellite * frag1 = new Fragment(*this, Angle(0));
+   Satellite * frag2 = new Fragment(*this, Angle(130));
+   Satellite * frag3 = new Fragment(*this, Angle(230));
+   
+   // offset the parts and fragments
+   frag1->update(384);
+   frag2->update(384);
+   frag3->update(384);
+   
+   // add them to the list of satellites
+   satellites.push_back(frag1);
+   satellites.push_back(frag2);
+   satellites.push_back(frag3);
+}
+
+/**********************************************************************
+ * GPS RIGHT DESTROY
+ * Upon collision GPS RIGHT satellites create 3 fragments
+ * and 0 parts
+ **********************************************************************/
+void GPSRight :: destroy(std::list<Satellite *> & satellites) const
+{
+   // create the parts and fragments
+   Satellite * frag1 = new Fragment(*this, Angle(0));
+   Satellite * frag2 = new Fragment(*this, Angle(130));
+   Satellite * frag3 = new Fragment(*this, Angle(230));
+   
+   // offset the parts and fragments
+   frag1->update(384);
+   frag2->update(384);
+   frag3->update(384);
+   
+   // add them to the list of satellites
+   satellites.push_back(frag1);
+   satellites.push_back(frag2);
+   satellites.push_back(frag3);
 }
 
 /**********************************************************************
@@ -255,22 +325,105 @@ Hubble :: Hubble()
 void Hubble :: destroy(std::list<Satellite *> & satellites) const
 {
    // Create the parts
-   Satellite * tel = new HubbleTelescope(*this, Angle(0.0), 10.0);
-   Satellite * comp = new HubbleComputer(*this, Angle(90.0), 7.0);
-   Satellite * left = new HubbleLeft(*this, Angle(45.0), 8.0);
-   Satellite * right = new HubbleRight(*this, Angle(270.0), 8.0);
+   Satellite * tel = new HubbleTelescope(*this, Angle(0), 10.0 /* the radius in pixels */);
+   Satellite * comp = new HubbleComputer(*this, Angle(180), 7.0 /* the radius in pixels */);
+   Satellite * left = new HubbleLeft(*this, Angle(90), 8.0 /* the radius in pixels */);
+   Satellite * right = new HubbleRight(*this, Angle(270), 8.0 /* the radius in pixels */);
    
    // offset the parts
-   tel->update(144);
-   comp->update(144);
-   left->update(144);
-   right->update(144);
+   tel->update(384);
+   comp->update(384);
+   left->update(384);
+   right->update(384);
    
    // add them to the list of satellites
    satellites.push_back(tel);
    satellites.push_back(comp);
    satellites.push_back(left);
    satellites.push_back(right);
+}
+
+/**********************************************************************
+ * HUBBLE TELESCOPE DESTROY
+ * Upon collision HUBBLE TELESCOPE satellites create 3 fragments
+ * and 0 parts
+ **********************************************************************/
+void HubbleTelescope :: destroy(std::list<Satellite *> & satellites) const
+{
+   // create the parts and fragments
+   Satellite * frag1 = new Fragment(*this, Angle(0));
+   Satellite * frag2 = new Fragment(*this, Angle(130));
+   Satellite * frag3 = new Fragment(*this, Angle(230));
+   
+   // offset the parts and fragments
+   frag1->update(384);
+   frag2->update(384);
+   frag3->update(384);
+   
+   // add them to the list of satellites
+   satellites.push_back(frag1);
+   satellites.push_back(frag2);
+   satellites.push_back(frag3);
+}
+
+/**********************************************************************
+ * HUBBLE COMPUTER DESTROY
+ * Upon collision HUBBLE COMPUTER satellites create 2 fragments
+ * and 0 parts
+ **********************************************************************/
+void HubbleComputer :: destroy(std::list<Satellite *> & satellites) const
+{
+   // create the parts and fragments
+   Satellite * frag1 = new Fragment(*this, Angle(0));
+   Satellite * frag2 = new Fragment(*this, Angle(180));
+   
+   // offset the parts and fragments
+   frag1->update(384);
+   frag2->update(384);
+   
+   // add them to the list of satellites
+   satellites.push_back(frag1);
+   satellites.push_back(frag2);
+}
+
+/**********************************************************************
+ * HUBBLE LEFT DESTROY
+ * Upon collision HUBBLE LEFT satellites create 2 fragments
+ * and 0 parts
+ **********************************************************************/
+void HubbleLeft :: destroy(std::list<Satellite *> & satellites) const
+{
+   // create the parts and fragments
+   Satellite * frag1 = new Fragment(*this, Angle(90));
+   Satellite * frag2 = new Fragment(*this, Angle(270));
+   
+   // offset the parts and fragments
+   frag1->update(384);
+   frag2->update(384);
+   
+   // add them to the list of satellites
+   satellites.push_back(frag1);
+   satellites.push_back(frag2);
+}
+
+/**********************************************************************
+ * HUBBLE RIGHT DESTROY
+ * Upon collision HUBBLE RIGHT satellites create 2 fragments
+ * and 0 parts
+ **********************************************************************/
+void HubbleRight :: destroy(std::list<Satellite *> & satellites) const
+{
+   // create the parts and fragments
+   Satellite * frag1 = new Fragment(*this, Angle(90));
+   Satellite * frag2 = new Fragment(*this, Angle(270));
+   
+   // offset the parts and fragments
+   frag1->update(384);
+   frag2->update(384);
+   
+   // add them to the list of satellites
+   satellites.push_back(frag1);
+   satellites.push_back(frag2);
 }
 
 /**********************************************************************
@@ -293,7 +446,7 @@ Sputnik :: Sputnik()
    // not dead yet!
    dead = false;
    
-   // radius in meters, whatever 12 pixels is
+   // radius in meters, whatever 4.0 pixels is
    radius = 4.0 * position.getZoom();
 }
 
@@ -304,16 +457,16 @@ Sputnik :: Sputnik()
 void Sputnik :: destroy(std::list<Satellite *> & satellites) const
 {
    // create the parts and fragments
-   Satellite * frag1 = new Fragment(*this);
-   Satellite * frag2 = new Fragment(*this);
-   Satellite * frag3 = new Fragment(*this);
-   Satellite * frag4 = new Fragment(*this);
+   Satellite * frag1 = new Fragment(*this, Angle(0));
+   Satellite * frag2 = new Fragment(*this, Angle(90));
+   Satellite * frag3 = new Fragment(*this, Angle(180));
+   Satellite * frag4 = new Fragment(*this, Angle(270));
    
    // offset the parts and fragments
-   frag1->update(144);
-   frag2->update(144);
-   frag3->update(144);
-   frag4->update(144);
+   frag1->update(384);
+   frag2->update(384);
+   frag3->update(384);
+   frag4->update(384);
    
    // add them to the list of satellites
    satellites.push_back(frag1);
@@ -355,22 +508,68 @@ Starlink :: Starlink()
 void Starlink :: destroy(std::list<Satellite *> & satellites) const
 {
    // create the satellites and parts
-   Satellite * frag1 = new Fragment(*this);
-   Satellite * frag2 = new Fragment(*this);
-   Satellite * body = new StarlinkBody(*this, Angle(30.0), 2.0);
-   Satellite * arr = new StarlinkArray(*this, Angle(45.0), 4.0);
+   Satellite * frag1 = new Fragment(*this, Angle(270));
+   Satellite * frag2 = new Fragment(*this, Angle(90));
+   Satellite * body = new StarlinkBody(*this, Angle(0), 2.0 /* the radius in pixels */);
+   Satellite * arr = new StarlinkArray(*this, Angle(180), 4.0 /* the radius in pixels */);
    
    // offset the satellites and parts
-   frag1->update(144);
-   frag2->update(144);
-   body->update(144);
-   arr->update(144);
+   frag1->update(384);
+   frag2->update(384);
+   body->update(384);
+   arr->update(384);
    
    // add them to the list of satellites
    satellites.push_back(frag1);
    satellites.push_back(frag2);
    satellites.push_back(body);
    satellites.push_back(arr);
+}
+
+/**********************************************************************
+ * STARLINK BODY DESTROY
+ * Upon collision STARLINK BODY satellites create 3 fragments
+ * and 0 parts
+ **********************************************************************/
+void StarlinkBody :: destroy(std::list<Satellite *> & satellites) const
+{
+   // create the parts and fragments
+   Satellite * frag1 = new Fragment(*this, Angle(0));
+   Satellite * frag2 = new Fragment(*this, Angle(130));
+   Satellite * frag3 = new Fragment(*this, Angle(230));
+   
+   // offset the parts and fragments
+   frag1->update(384);
+   frag2->update(384);
+   frag3->update(384);
+   
+   // add them to the list of satellites
+   satellites.push_back(frag1);
+   satellites.push_back(frag2);
+   satellites.push_back(frag3);
+}
+
+/**********************************************************************
+ * STARLINK ARRAY DESTROY
+ * Upon collision STARLINK ARRAY satellites create 3 fragments
+ * and 0 parts
+ **********************************************************************/
+void StarlinkArray :: destroy(std::list<Satellite *> & satellites) const
+{
+   // create the parts and fragments
+   Satellite * frag1 = new Fragment(*this, Angle(0));
+   Satellite * frag2 = new Fragment(*this, Angle(130));
+   Satellite * frag3 = new Fragment(*this, Angle(230));
+   
+   // offset the parts and fragments
+   frag1->update(384);
+   frag2->update(384);
+   frag3->update(384);
+   
+   // add them to the list of satellites
+   satellites.push_back(frag1);
+   satellites.push_back(frag2);
+   satellites.push_back(frag3);
 }
 
 /**********************************************************************
@@ -408,9 +607,9 @@ Ship :: Ship()
 void Ship :: destroy(std::list<Satellite *> & satellites) const
 {
    // create the fragments
-   Satellite * frag1 = new Fragment(*this);
-   Satellite * frag2 = new Fragment(*this);
-   Satellite * frag3 = new Fragment(*this);
+   Satellite * frag1 = new Fragment(*this, Angle(0));
+   Satellite * frag2 = new Fragment(*this, Angle(140));
+   Satellite * frag3 = new Fragment(*this, Angle(220));
    
    // offset the fragments
    frag1->update(144);
@@ -496,18 +695,18 @@ Dragon :: Dragon()
 void Dragon :: destroy(std::list<Satellite *> & satellites) const
 {
    // create the parts and fragments
-   Satellite * frag1 = new Fragment(*this);
-   Satellite * frag2 = new Fragment(*this);
-   Satellite * center = new DragonCenter(*this, Angle(30.0), 6.0);
-   Satellite * left = new DragonLeft(*this, Angle(45.0), 6.0);
-   Satellite * right = new DragonRight(*this, Angle(270.0), 6.0);
+   Satellite * frag1 = new Fragment(*this, Angle(45));
+   Satellite * frag2 = new Fragment(*this, Angle(315));
+   Satellite * center = new DragonCenter(*this, Angle(0), 6.0 /* the radius in pixels */);
+   Satellite * left = new DragonLeft(*this, Angle(140), 6.0 /* the radius in pixels */);
+   Satellite * right = new DragonRight(*this, Angle(220), 6.0 /* the radius in pixels */);
    
    // offset them
-   frag1->update(144);
-   frag2->update(144);
-   center->update(144);
-   left->update(144);
-   right->update(144);
+   frag1->update(384);
+   frag2->update(384);
+   center->update(384);
+   left->update(384);
+   right->update(384);
    
    // add them to the list of satellites
    satellites.push_back(frag1);
@@ -525,16 +724,16 @@ void Dragon :: destroy(std::list<Satellite *> & satellites) const
 void DragonCenter :: destroy(std::list<Satellite *> & satellites) const
 {
    // create the fragments
-   Satellite * frag1 = new Fragment(*this);
-   Satellite * frag2 = new Fragment(*this);
-   Satellite * frag3 = new Fragment(*this);
-   Satellite * frag4 = new Fragment(*this);
+   Satellite * frag1 = new Fragment(*this, Angle(0));
+   Satellite * frag2 = new Fragment(*this, Angle(90));
+   Satellite * frag3 = new Fragment(*this, Angle(180));
+   Satellite * frag4 = new Fragment(*this, Angle(270));
    
    // offset the fragments
-   frag1->update(144);
-   frag2->update(144);
-   frag3->update(144);
-   frag4->update(144);
+   frag1->update(384);
+   frag2->update(384);
+   frag3->update(384);
+   frag4->update(384);
    
    // add them to the list of satellites
    satellites.push_back(frag1);
@@ -551,12 +750,12 @@ void DragonCenter :: destroy(std::list<Satellite *> & satellites) const
 void DragonLeft :: destroy(std::list<Satellite *> & satellites) const
 {
    // create the fragments
-   Satellite * frag1 = new Fragment(*this);
-   Satellite * frag2 = new Fragment(*this);
+   Satellite * frag1 = new Fragment(*this, Angle(90));
+   Satellite * frag2 = new Fragment(*this, Angle(270));
    
    // offset the fragments
-   frag1->update(144);
-   frag2->update(144);
+   frag1->update(384);
+   frag2->update(384);
    
    //add them to the list of satellites
    satellites.push_back(frag1);
@@ -571,12 +770,12 @@ void DragonLeft :: destroy(std::list<Satellite *> & satellites) const
 void DragonRight :: destroy(std::list<Satellite *> & satellites) const
 {
    // create the new fragments
-   Satellite * frag1 = new Fragment(*this);
-   Satellite * frag2 = new Fragment(*this);
+   Satellite * frag1 = new Fragment(*this, Angle(0));
+   Satellite * frag2 = new Fragment(*this, Angle(180));
    
    // offset the fragments
-   frag1->update(144);
-   frag2->update(144);
+   frag1->update(384);
+   frag2->update(384);
    
    // add them to the list of satellites
    satellites.push_back(frag1);
@@ -588,13 +787,14 @@ void DragonRight :: destroy(std::list<Satellite *> & satellites) const
  * A constructor for an fragment satellite that takes a parent SATELLITE
  * and an ANGLE
  **********************************************************************/
-Fragment :: Fragment(const Satellite & parent)
+Fragment :: Fragment(const Satellite & parent, Angle shootoff)
 {
    // start at the same location as my parent from which I am generated
    position = parent.getPosition();
    
    // the orientation of the fragment will be random
-   angle.setDegrees(random(0.0, 360.0));
+//   angle.setDegrees(random(0.0, 360.0));
+   angle = shootoff;
    
    // start with the parents velocity
    velocity = parent.getVelocity();

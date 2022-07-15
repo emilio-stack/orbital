@@ -9,8 +9,13 @@
  ************************************************************************/
 
 /**
- * TODO: offset is 0 when there it is not attached to a parent but the parent sets the offset when it is attached and called in the parent draw.
- * TODO: implement expiration of projectille and fragment
+ * TODO: Parts are not atomic, they break up into other fragments.
+ * TODO: Get rid of atomic satellite, make parts inherit from satellite
+ * TODO: and each implement the destroy method. Revisit atomic satellite?
+ * TODO: maybe make expiring the new atomic because the only atomics would then be
+ * TODO: projectile and fragment, and they both expire so combine atomic and expiring.
+ * TODO: now we need to find the balance between updating 3000 or so seconds,
+ * TODO: and kick of correct magnitude.
  */
 
 #pragma once
@@ -181,7 +186,7 @@ public:
    
    // constructor
    using Satellite :: Satellite;   
-   AtomicSatellite(const Satellite & parent, Angle shootOff, double rad);
+   AtomicSatellite(const Satellite & parent, Angle shootoff, double rad);
    
    // Upon collision create parts & fragments if any
    virtual void destroy(std::list<Satellite *> & satellites) const
@@ -222,7 +227,7 @@ class Fragment: public ExpiringSatellite
 {
 public:
    using ExpiringSatellite :: ExpiringSatellite;
-   Fragment(const Satellite & parent);
+   Fragment(const Satellite & parent, Angle shootOff);
    void draw() const { drawFragment(position, angularVelocity); }
 };
 
@@ -247,6 +252,7 @@ class GPSCenter: public AtomicSatellite
 {
 public:
    using AtomicSatellite :: AtomicSatellite;
+   void destroy(std::list<Satellite *> & satellites) const;
    void draw() const { drawGPSCenter(position, angularVelocity); }
 };
 
@@ -259,8 +265,8 @@ class GPSRight: public AtomicSatellite
 {
 public:
    using AtomicSatellite :: AtomicSatellite;
-   
-   void draw() const { drawGPSRight(position, angularVelocity, position); }
+   void destroy(std::list<Satellite *> & satellites) const;
+   void draw() const { drawGPSRight(position, angularVelocity, Position()); }
 };
 
 /**********************************************************************
@@ -272,8 +278,8 @@ class GPSLeft: public AtomicSatellite
 {
 public:
    using AtomicSatellite :: AtomicSatellite;
-   
-   void draw() const { drawGPSRight(position, angularVelocity, position); }
+   void destroy(std::list<Satellite *> & satellites) const;
+   void draw() const { drawGPSRight(position, angularVelocity, Position()); }
 };
 
 /**********************************************************************
@@ -285,7 +291,7 @@ class HubbleTelescope: public AtomicSatellite
 {
 public:
    using AtomicSatellite :: AtomicSatellite;
-   
+   void destroy(std::list<Satellite *> & satellites) const;
    void draw() const { drawHubbleTelescope(position, angularVelocity); }
 };
 
@@ -298,7 +304,7 @@ class HubbleComputer: public AtomicSatellite
 {
 public:
    using AtomicSatellite :: AtomicSatellite;
-   
+   virtual void destroy(std::list<Satellite *> & satellites) const;
    void draw() const { drawHubbleComputer(position, angularVelocity); }
 };
 
@@ -311,7 +317,7 @@ class HubbleLeft: public AtomicSatellite
 {
 public:
    using AtomicSatellite :: AtomicSatellite;
-   
+   virtual void destroy(std::list<Satellite *> & satellites) const;
    void draw() const { drawHubbleLeft(position, angularVelocity); }
 };
 
@@ -324,7 +330,7 @@ class HubbleRight: public AtomicSatellite
 {
 public:
    using AtomicSatellite :: AtomicSatellite;
-   
+   virtual void destroy(std::list<Satellite *> & satellites) const;
    void draw() const { drawHubbleRight(position, angularVelocity); }
 };
 
@@ -385,7 +391,7 @@ class StarlinkBody: public AtomicSatellite
 {
 public:
    using AtomicSatellite :: AtomicSatellite;
-   
+   void destroy(std::list<Satellite *> & satellites) const;
    void draw() const { drawStarlinkBody(position, angularVelocity); }
 };
 
@@ -398,6 +404,6 @@ class StarlinkArray: public AtomicSatellite
 {
 public:
    using AtomicSatellite :: AtomicSatellite;
-   
+   void destroy(std::list<Satellite *> & satellites) const;
    void draw() const { drawStarlinkArray(position, angularVelocity); }
 };
