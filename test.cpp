@@ -22,5 +22,5 @@ void testRunner()
    TestPosition().run();
    TestAngle().run();
 //   TestSatellite().run();
-   TestAcceleration().run();
+//   TestAcceleration().run();
 }

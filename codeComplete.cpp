@@ -2,15 +2,21 @@
  * 1. Name:
  *      Emilio Regino & Bradley Payne
  * 2. Assignment Name:
- *      Lab 07: Orbit Simulator
+ *      Lab 08: Orbit Simulator Final Submission
  * 3. Assignment Description:
  *      Simulate satellites orbiting the earth
  * 4. What was the hardest part? Be as specific as possible.
- *      The hardest part was debugging why the orbits were not updating correctly.
- *      It seemed that gravity was not applied correctly. But there was a problem with the angle updates.
- *      Next was figuring out why I had bad access all the time but this was later explained to me.
+ *      The hardest part was debugging why the orbits were
+ *      not destroying correctly. When a satellite would
+ *      destroy the parts created from it would be created
+ *      in some really bizzare positions. But after
+ *      troubleshooting it was discovered that the magnitude
+ *      of the kick applied was not yet sufficient and that
+ *      fixed the bug. There was also a bug in offsetting
+ *      the GPS RIGHT and LEFT satellites twice when
+ *      their draw functions were called.
  * 5. How long did it take for you to complete the assignment?
- *      ~16 hours
+ *      ~7 hours
  *****************************************************************/
 
 #include "test.h"       // for TEST RUNNER
@@ -53,7 +59,7 @@ int main(int argc, char** argv)
 #endif // !_WIN32
 {
    // Test
-//   testRunner();
+   testRunner();
    
    // Initialize OpenGL
    Position ptUpperRight;
