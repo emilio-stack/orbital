@@ -37,6 +37,5 @@ public:
 private:
    Earth earth;                     // the earth
    list<Satellite *> satellites;    // collection of satellites in orbit
-   Position ptUpperRight;           // size of the screen
    Star stars[NUM_STARS];           // the star array
 };

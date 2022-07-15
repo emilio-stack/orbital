@@ -14,8 +14,7 @@
  * Initializes all the member variables of the orbital
  * simulator: Stars, Satellites, ptUpperRight
  ************************************************************************/
-Simulator::Simulator(Position ptUpperRight) :
-ptUpperRight(ptUpperRight)
+Simulator::Simulator(Position ptUpperRight)
 {
    // initialize the stars
    for (int i = 0; i < NUM_STARS; i++)
